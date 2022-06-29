@@ -26,95 +26,114 @@ class _DailyReportsState extends State<DailyReports> {
 
   Widget getBody(context) {
     var size = MediaQuery.of(context).size;
-    return Column(
-      children: [
-        //header card
-        Card(
-          child: Padding(
-            padding:
-                const EdgeInsets.only(top: 10, bottom: 10, right: 10, left: 10),
-            child:
-                //header row
-                Column(
-              children: [
-                //title
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 5),
+      child: Column(
+        children: [
+          //header card
+          SizedBox(
+            height: 130,
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    top: 10, bottom: 10, right: 10, left: 10),
+                child:
+                    //header row
+                    Column(
                   children: [
-                    const Text(
-                      "Transactions",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                    //title
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Transactions",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 22),
+                        ),
+                        Icon(Ionicons.search, color: ColorTheme().blackColor),
+                      ],
                     ),
-                    Icon(Ionicons.search, color: ColorTheme().blackColor),
+
+                    //day tabs
+
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListView.builder(
+                          itemCount: days.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            var day = days[index];
+                            return weekTabs(size, index, day);
+                          },
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 20),
-                //week tabs row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: List.generate(7, (index) {
-                    return weekTabs(size, index);
-                  }),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
 
-        //income/expense  card
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Transaction Summary",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      const Text(
-                        "Income",
-                        style: TextStyle(),
-                      ),
-                      const Text(
-                        "Rs. 60000",
-                        style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Container(
-                        width: 1,
-                        height: 20,
-                        color: Colors.black,
-                      ),
-                      const Text(
-                        "Expenses",
-                      ),
-                      const Text(
-                        "Rs. 100000",
-                        style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ],
+          //income/expense  card
+          incomeExpenseStatus(),
+
+          // transaction summary
+          Expanded(child: transactionSection(context)),
+        ],
+      ),
+    );
+  }
+
+  Card incomeExpenseStatus() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Transaction Summary",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const Text(
+                    "Income",
+                    style: TextStyle(),
                   ),
-                ),
-              ],
+                  const Text(
+                    "Rs. 60000",
+                    style: TextStyle(
+                        color: Colors.green,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Container(
+                    width: 1,
+                    height: 20,
+                    color: Colors.black,
+                  ),
+                  const Text(
+                    "Expenses",
+                  ),
+                  const Text(
+                    "Rs. 100000",
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
-
-        // transaction summary
-        Expanded(child: transactionSection(context)),
-      ],
+      ),
     );
   }
 
@@ -175,53 +194,56 @@ class _DailyReportsState extends State<DailyReports> {
     super.initState();
   }
 
-  Widget weekTabs(size, index) {
-    DateTimeExtractor().getDayAsInteger(activeDay);
+  Widget weekTabs(size, index, day) {
+    log('Active month:$activeDay');
     return GestureDetector(
       onTap: () {
         setState(() {
           activeDay = index;
         });
       },
-      child: SizedBox(
-        width: (size.width - 40) / 7,
-        child: Column(
-          children: [
-            Text(
-              days[index]['label'],
-              style: TextStyle(
-                  fontSize: 12,
+      child: Row(
+        children: [
+          Column(
+            children: [
+              Text(
+                day['label'],
+                style: TextStyle(
+                    fontSize: 12,
+                    color: activeDay == index
+                        ? ColorTheme().primaryColor
+                        : ColorTheme().blackColor.withOpacity(0.8),
+                    fontWeight: activeDay == index
+                        ? FontWeight.w500
+                        : FontWeight.normal),
+              ),
+              const SizedBox(height: 5),
+              Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
                   color: activeDay == index
                       ? ColorTheme().primaryColor
-                      : ColorTheme().blackColor.withOpacity(0.8),
-                  fontWeight:
-                      activeDay == index ? FontWeight.w500 : FontWeight.normal),
-            ),
-            const SizedBox(height: 5),
-            Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                color: activeDay == index
-                    ? ColorTheme().primaryColor
-                    : ColorTheme().whiteColor,
-                shape: BoxShape.circle,
-                border: Border.all(color: ColorTheme().primaryColor),
-              ),
-              child: Center(
-                child: Text(
-                  days[index]['day'],
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: activeDay != index
-                        ? ColorTheme().primaryColor
-                        : ColorTheme().whiteColor,
+                      : ColorTheme().whiteColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: ColorTheme().primaryColor),
+                ),
+                child: Center(
+                  child: Text(
+                    day['day'],
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: activeDay != index
+                          ? ColorTheme().primaryColor
+                          : ColorTheme().whiteColor,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+          const SizedBox(width: 20),
+        ],
       ),
     );
   }
