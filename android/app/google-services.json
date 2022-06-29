@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "147965470782",
+    "project_id": "hamro-gaadi-v1",
+    "storage_bucket": "hamro-gaadi-v1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:147965470782:android:0530b7856dcc4efd03496f",
+        "android_client_info": {
+          "package_name": "com.example.hamro_gaadi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "147965470782-rjj96gbjq6cere7dl361191r7jelvq13.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhRHkWNS-AtPNxcuQundNxfU9wrHPq6ic"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "147965470782-rjj96gbjq6cere7dl361191r7jelvq13.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

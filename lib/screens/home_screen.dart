@@ -45,9 +45,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
       child: IndexedStack(
         index: pageIndex,
-        children: [
-          const DailyReports(),
-          const StatsScreen(),
+        children: const [
+          DailyReports(),
+          StatsScreen(),
           Center(
             child: Text("Vehicle info"),
           ),

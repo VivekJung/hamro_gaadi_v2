@@ -39,7 +39,7 @@ class _StatsScreenState extends State<StatsScreen> {
       children: [
         //header card
         SizedBox(
-          height: 130,
+          height: 140,
           child: Card(
             child: Padding(
               padding: const EdgeInsets.only(
