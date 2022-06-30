@@ -61,18 +61,18 @@ class Gaadi {
 }
 
 @JsonSerializable()
-class Users {
+class User {
   final List<Gaadi> gaadiList;
   final String log;
   final String name;
   final String type;
 
-  Users({
+  User({
     this.gaadiList = const [],
     this.log = "",
     this.name = "",
     this.type = "",
   });
-  factory Users.fromJson(Map<String, dynamic> json) => _$UsersFromJson(json);
+  factory User.fromJson(Map<String, dynamic> json) => _$UsersFromJson(json);
   Map<String, dynamic> toJson() => _$UsersToJson(this);
 }

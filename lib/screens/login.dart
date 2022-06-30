@@ -29,6 +29,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var email = "";
+    var password = "";
     return Scaffold(
       // appBar: AppBar(
       //   title: const Text('Login'),
@@ -69,17 +71,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  emailLoginButton(formKey) {
-    return LoginButton(
-      label: "Sign-in with हाम्रो गाडी account",
-      icon: Ionicons.car,
-      color: ColorTheme().primaryColor,
-      formkey: formKey,
-      email: emailController.text.toString(),
-      password: passwordController.text.toString(),
     );
   }
 
@@ -151,14 +142,83 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
             const SizedBox(height: 50),
-            emailLoginButton(formKey),
+            // emailLoginButton(formKey, email, password),
+            emailSignupButton(formKey),
           ],
         ),
       ),
     );
   }
+
+  emailLoginButton(formKey) {
+    return loginButton(
+      "Sign-in with हाम्रो गाडी account",
+      Ionicons.car,
+      ColorTheme().primaryColor,
+      formKey,
+    );
+  }
+
+  loginButton(String label, IconData icon, Color color, dynamic formkey) {}
+
+  emailSignupButton(formKey) {
+    return signupButton(
+      "Register new हाम्रो गाडी account",
+      Ionicons.trail_sign,
+      ColorTheme().blackColor,
+      formKey,
+    );
+  }
+
+  signupButton(String label, IconData icon, Color color, dynamic formkey) {
+    bool isLoading = false;
+    bool loadingStatus() {
+      setState(() {
+        isLoading = !isLoading;
+        stat(isLoading);
+      });
+      return isLoading;
+    }
+
+    return !isLoading
+        ? Container(
+            color: Colors.transparent,
+            margin: const EdgeInsets.only(bottom: 10),
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                if (formkey.currentState!.validate()) {
+                  loadingStatus();
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        duration: Duration(seconds: 1),
+                        content: Text('Sending request to cloud')),
+                  );
+
+                  await AuthService().emailPasswordRegister(
+                      emailController.text, passwordController.text);
+                }
+              },
+              icon: Icon(
+                icon,
+                color: Colors.white,
+                size: 20,
+              ),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.all(18),
+                backgroundColor: color,
+              ),
+              label: Text(
+                label,
+                style: const TextStyle(fontSize: 18),
+              ),
+            ),
+          )
+        : circularLoading(80);
+  }
 }
 
+//TODO: DELETE LOGIN BUTTON AND MERGE WITH FUNCTION TO AVOID TEXT CONTROLLER ISSUE
 class LoginButton extends StatefulWidget {
   final String label;
   final IconData icon;
@@ -207,6 +267,81 @@ class _LoginButtonState extends State<LoginButton> {
                   );
                   await AuthService().emailPasswordLogin(
                       widget.email, widget.password, context);
+                }
+              },
+              icon: Icon(
+                widget.icon,
+                color: Colors.white,
+                size: 20,
+              ),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.all(18),
+                backgroundColor: widget.color,
+              ),
+              label: Text(
+                widget.label,
+                style: const TextStyle(fontSize: 18),
+              ),
+            ),
+          )
+        : circularLoading(80);
+  }
+}
+
+class SignupButton extends StatefulWidget {
+  final String label;
+  final IconData icon;
+  final Color color;
+  final dynamic formkey;
+  final String email, password;
+  final dynamic function;
+
+  const SignupButton({
+    Key? key,
+    required this.function,
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.formkey,
+    required this.email,
+    required this.password,
+  }) : super(key: key);
+
+  @override
+  State<SignupButton> createState() => _SignupButton();
+}
+
+class _SignupButton extends State<SignupButton> {
+  bool isLoading = false;
+  bool loadingStatus() {
+    setState(() {
+      isLoading = !isLoading;
+      stat(isLoading);
+    });
+    return isLoading;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return !isLoading
+        ? Container(
+            color: Colors.transparent,
+            margin: const EdgeInsets.only(bottom: 10),
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                if (widget.formkey.currentState!.validate()) {
+                  loadingStatus();
+                  setState(() {
+                    widget.email;
+                    widget.password;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        duration: Duration(seconds: 1),
+                        content: Text('Sending request to cloud')),
+                  );
+                  log(widget.password);
+                  await widget.function();
                 }
               },
               icon: Icon(

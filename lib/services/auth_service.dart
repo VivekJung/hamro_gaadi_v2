@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hamro_gaadi/services/firestore_service.dart';
 
 class AuthService {
   final userStream = FirebaseAuth.instance.authStateChanges();
@@ -15,21 +16,33 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         log('No user found for that email.');
-        return ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              duration: Duration(seconds: 1),
-              content: Text('No user found for that email')),
-        );
       } else if (e.code == 'wrong-password') {
         log('Wrong password provided for that user.');
         //check on this snackbar.. why it is not working
 
-        return ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              duration: Duration(seconds: 1),
-              content: Text('Wrong password provided for that user')),
-        );
+      } else {
+        log('Error while signing in $e');
       }
+    }
+  }
+
+  //register with email and password
+  Future emailPasswordRegister(String email, String password) async {
+    log("Email :$email Psswd : $password");
+    try {
+      var result = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+      var user = result.user;
+      //create a new doc for the user with thee uid
+      await FirestoreService(uid: user!.uid.toString()).updateUserInfo(
+        user.uid.toString(),
+        "no name",
+        "user",
+        email,
+        password,
+      );
+    } on FirebaseAuthException catch (e) {
+      log('Error while signing in $e');
     }
   }
 
