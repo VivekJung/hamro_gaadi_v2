@@ -201,7 +201,9 @@ class _LoginButtonState extends State<LoginButton> {
                 if (widget.formkey.currentState!.validate()) {
                   loadingStatus();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Sending request to cloud')),
+                    const SnackBar(
+                        duration: Duration(seconds: 1),
+                        content: Text('Sending request to cloud')),
                   );
                   await AuthService().emailPasswordLogin(
                       widget.email, widget.password, context);

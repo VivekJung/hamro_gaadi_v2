@@ -35,7 +35,9 @@ class ProfileScreen extends StatelessWidget {
       ),
       body: Container(
         margin: const EdgeInsets.all(10),
+        width: MediaQuery.of(context).size.width,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             //profile picture
             Container(
@@ -43,7 +45,9 @@ class ProfileScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 image: DecorationImage(
-                  image: NetworkImage(user.photoURL ?? ""),
+                  image: NetworkImage(user.photoURL ??
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVFaCsQ5YHfQtO-iAjfLkPr3kqWWDgjbBawg&usqp=CAU"),
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
