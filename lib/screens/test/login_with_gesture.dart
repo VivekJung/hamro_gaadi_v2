@@ -74,95 +74,91 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  var dragFunction = Container(color: Colors.green, height: 80);
+
+  onHorizontalDragEndHandler(DragEndDetails details) {
+    setState(() {
+      dragFunction = emailSignupButton(formKey);
+    });
+  }
+
   loginDesign() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Form(
-        key: formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Row(
+    return GestureDetector(
+      dragStartBehavior: DragStartBehavior.down,
+      onHorizontalDragEnd: onHorizontalDragEndHandler,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: Icon(
+                        Icons.alternate_email,
+                        color: ColorTheme().primaryColor,
+                      ),
+                    ),
+                    Expanded(
+                      child: TextFormField(
+                        controller: emailController,
+                        autofocus: false,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Email',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'No username/email provided';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
-                      Icons.alternate_email,
+                      Icons.lock,
                       color: ColorTheme().primaryColor,
                     ),
                   ),
                   Expanded(
                     child: TextFormField(
-                      controller: emailController,
+                      controller: passwordController,
                       autofocus: false,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Email',
+                        labelText: 'Lock-code',
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'No username/email provided';
+                          return 'No lock-code provided';
                         }
                         return null;
                       },
                     ),
-                  ),
+                  )
                 ],
               ),
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: Icon(
-                    Icons.lock,
-                    color: ColorTheme().primaryColor,
-                  ),
-                ),
-                Expanded(
-                  child: TextFormField(
-                    controller: passwordController,
-                    autofocus: false,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Lock-code',
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'No lock-code provided';
-                      }
-                      return null;
-                    },
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(height: 50),
-            SizedBox(
-              height: 100,
-              width: MediaQuery.of(context).size.width,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  SizedBox(
-                    height: 100,
-                    width: MediaQuery.of(context).size.width - 50,
-                    child: emailLoginButton(formKey),
-                  ),
-                  const SizedBox(width: 40),
-                  SizedBox(
-                    height: 100,
-                    width: MediaQuery.of(context).size.width - 60,
-                    child: emailSignupButton(formKey),
-                  ),
-                ],
-              ),
-            )
-          ],
+              const SizedBox(height: 50),
+              SizedBox(
+                height: 100,
+                child: dragFunction,
+              )
+            ],
+          ),
         ),
       ),
     );
