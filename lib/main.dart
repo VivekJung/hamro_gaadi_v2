@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:hamro_gaadi/app_routes.dart';
 import 'package:hamro_gaadi/firebase_options.dart';
 import 'package:hamro_gaadi/resources/color_theme.dart';
+import 'package:hamro_gaadi/services/firestore_service.dart';
+import 'package:hamro_gaadi/services/models.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

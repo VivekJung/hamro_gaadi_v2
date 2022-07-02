@@ -6,4 +6,5 @@ class ColorTheme {
   Color inactiveColor = Colors.grey;
   Color whiteColor = Colors.white;
   Color blackColor = Colors.black;
+  Color greenColor = Colors.green.shade600;
 }

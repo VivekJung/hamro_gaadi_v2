@@ -2,6 +2,7 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:flutter/material.dart';
 import 'package:hamro_gaadi/resources/color_theme.dart';
 import 'package:hamro_gaadi/screens/tabs/daily_reports.dart';
+import 'package:hamro_gaadi/screens/tabs/gaadi.dart';
 import 'package:hamro_gaadi/screens/tabs/profile.dart';
 import 'package:hamro_gaadi/screens/tabs/stats_screen.dart';
 import 'package:ionicons/ionicons.dart';
@@ -49,9 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: const [
           DailyReports(),
           StatsScreen(),
-          Center(
-            child: Text("Vehicle info"),
-          ),
+          GaadiScreen(),
           ProfileScreen(),
           Center(
             child: Text("add new "),
@@ -63,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   //* start of bottom navigation functions and widgets
 
-  int pageIndex = 0;
+  int pageIndex = 2;
   Widget getBottomNavigation() {
     List<IconData> iconItems = [
       Ionicons.calendar,

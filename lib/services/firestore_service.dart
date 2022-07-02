@@ -11,20 +11,22 @@ class FirestoreService {
 
   //getting all list of gaadis
   Future<List<Gaadi>> getAllGaadis() async {
-    var ref = _db.collection('entires');
+    var ref = _db.collection('gaadi');
     var snapshot = await ref.get();
     var data = snapshot.docs.map((e) => e.data()); // iterable map
     var gaadis = data.map((json) => Gaadi.fromJson(json));
+    log("Let's see :::: ${gaadis.toList().length}");
     return gaadis.toList();
   }
 
   //geting all list of entries
   Future<List<Entries>> getAllEntries() async {
     //getting all data at once and not as stream
-    var ref = _db.collection('entires');
+    var ref = _db.collection('entries');
     var snapshot = await ref.get();
     var data = snapshot.docs.map((e) => e.data()); // iterable map
     var entries = data.map((json) => Entries.fromJson(json));
+    log("Let's see :::: ${entries.toList().length}");
     return entries.toList();
   }
 
@@ -38,8 +40,8 @@ class FirestoreService {
 
   //updating userid
   //TODO: ADD GAADI AND ENTRIES
-  final String uid;
-  FirestoreService({required this.uid});
+  final String? uid;
+  FirestoreService({this.uid});
   Future<void> updateUserInfo(String id, String name, String type, String email,
       String password) async {
     var ref = _db.collection('users').doc(uid);
@@ -97,5 +99,34 @@ class FirestoreService {
         .set(data, SetOptions(merge: true))
         .then((value) => log('Updated'))
         .catchError((error) => log("Failed to add entry: $error"));
+  }
+
+  //*getting Stream of gaadi according to user
+  Stream<List<Gaadi>> streamAllGaadi() {
+    var stream = _db
+        .collection('gaadi')
+        .where("addedBy", isEqualTo: uid.toString())
+        .snapshots()
+        .map((event) => event.docs
+            .map(
+              (e) => Gaadi.fromJson(e.data()),
+            )
+            .toList());
+    log(stream.toString());
+    return stream;
+    // final List<Gaadi> gaadiFromFirestore = <Gaadi>[];
+    // try {
+    //   return _db.collection("gaadi").snapshots().map((g) {
+    //     for (final DocumentSnapshot<Map<String, dynamic>> doc in g.docs) {
+    //       gaadiFromFirestore.add(Gaadi.fromDocumentSnapshot(doc: doc));
+    //       log(doc.toString());
+    //     }
+    //     log(message)
+    //     return gaadiFromFirestore;
+    //   });
+    // } catch (e) {
+    //   log(e.toString());
+    //   rethrow;
+    // }
   }
 }

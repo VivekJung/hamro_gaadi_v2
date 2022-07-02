@@ -139,6 +139,7 @@ class ProfileButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width - 100,
+      height: 70,
       child: ElevatedButton.icon(
         onPressed: btnFunction ?? () {},
         //

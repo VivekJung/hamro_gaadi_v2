@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'models.g.dart';
 
@@ -22,6 +23,16 @@ class Entries {
   factory Entries.fromJson(Map<String, dynamic> json) =>
       _$EntriesFromJson(json);
   Map<String, dynamic> toJson() => _$EntriesToJson(this);
+  //
+  factory Entries.fromDocumentSnapshot(
+      {required DocumentSnapshot<Map<String, dynamic>> doc}) {
+    return Entries(
+      addedBy: doc.data()!['addedBy'],
+      entryID: doc.data()!['entryID'],
+      entryLog: doc.data()!['entryLog'],
+      gaadiID: doc.data()!['gaadiID'],
+    );
+  }
 }
 
 @JsonSerializable()
@@ -49,15 +60,31 @@ class Gaadi {
   final List<Entries> entries;
   final String plateNumber;
   final int seats;
+  final String gaadiID;
 
   Gaadi({
     this.addedBy = "",
     this.entries = const [],
     this.plateNumber = "",
     this.seats = 0,
+    this.gaadiID = "",
   });
   factory Gaadi.fromJson(Map<String, dynamic> json) => _$GaadiFromJson(json);
   Map<String, dynamic> toJson() => _$GaadiToJson(this);
+  //
+  // factory Gaadi.fromDocumentSnapshot(
+  //     {required DocumentSnapshot<Map<String, dynamic>> doc}) {
+  //   return Gaadi(
+  //     addedBy: doc.data()!["addedBy"] ?? "",
+  //     entries: (doc.data()!['entries'] as List<dynamic>?)
+  //             xxxxx ?.map((e) => Entries.fromDocumentSnapshot(e as Map<String, dynamic>))
+  //             .toList() ??
+  //         const [],
+  //     plateNumber: doc.data()!["plateNumber"] ?? "",
+  //     seats: doc.data()!["seats"] ?? 0,
+  //     gaadiID: doc.data()!["gaadiId"] ?? "",
+  //   );
+  // }
 }
 
 @JsonSerializable()

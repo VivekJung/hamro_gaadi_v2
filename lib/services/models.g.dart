@@ -39,20 +39,21 @@ Map<String, dynamic> _$DetailsToJson(Details instance) => <String, dynamic>{
     };
 
 Gaadi _$GaadiFromJson(Map<String, dynamic> json) => Gaadi(
-      addedBy: json['addedBy'] as String? ?? "",
-      entries: (json['entries'] as List<dynamic>?)
-              ?.map((e) => Entries.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-      plateNumber: json['plateNumber'] as String? ?? "",
-      seats: json['seats'] as int? ?? 0,
-    );
+    addedBy: json['addedBy'] as String? ?? "",
+    entries: (json['entries'] as List<dynamic>?)
+            ?.map((e) => Entries.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        const [],
+    plateNumber: json['plateNumber'] as String? ?? "",
+    seats: json['seats'] as int? ?? 0,
+    gaadiID: json['gaadiID'] as String? ?? "");
 
 Map<String, dynamic> _$GaadiToJson(Gaadi instance) => <String, dynamic>{
       'addedBy': instance.addedBy,
       'entries': instance.entries,
       'plateNumber': instance.plateNumber,
       'seats': instance.seats,
+      'gaadiID': instance.gaadiID,
     };
 
 User _$UsersFromJson(Map<String, dynamic> json) => User(

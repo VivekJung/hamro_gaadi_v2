@@ -1,12 +1,10 @@
 import 'dart:developer';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:hamro_gaadi/resources/color_theme.dart';
 import 'package:hamro_gaadi/resources/custom_loading_indicator.dart';
 import 'package:hamro_gaadi/resources/error_notifier.dart';
 import 'package:hamro_gaadi/services/auth_service.dart';
-import 'package:hamro_gaadi/services/models.dart';
 import 'package:ionicons/ionicons.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -45,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.1,
+                  height: MediaQuery.of(context).size.height * 0.02,
                 ),
                 CircleAvatar(
                     radius: 104,
@@ -75,94 +73,101 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   loginDesign() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Form(
-        key: formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Row(
+    return Card(
+      elevation: 5.0,
+      child: Container(
+        margin: const EdgeInsets.only(top: 20.0, bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: Icon(
+                        Icons.alternate_email,
+                        color: ColorTheme().primaryColor,
+                      ),
+                    ),
+                    Expanded(
+                      child: TextFormField(
+                        controller: emailController,
+                        autofocus: false,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Email',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'No username/email provided';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
-                      Icons.alternate_email,
+                      Icons.lock,
                       color: ColorTheme().primaryColor,
                     ),
                   ),
                   Expanded(
                     child: TextFormField(
-                      controller: emailController,
+                      controller: passwordController,
                       autofocus: false,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Email',
+                        labelText: 'Lock-code',
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'No username/email provided';
+                          return 'No lock-code provided';
                         }
                         return null;
                       },
                     ),
-                  ),
+                  )
                 ],
               ),
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: Icon(
-                    Icons.lock,
-                    color: ColorTheme().primaryColor,
-                  ),
-                ),
-                Expanded(
-                  child: TextFormField(
-                    controller: passwordController,
-                    autofocus: false,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Lock-code',
+              const SizedBox(height: 50),
+              SizedBox(
+                height: 80,
+                width: MediaQuery.of(context).size.width,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    SizedBox(
+                      height: 80,
+                      width: MediaQuery.of(context).size.width - 50,
+                      child: emailLoginButton(formKey),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'No lock-code provided';
-                      }
-                      return null;
-                    },
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(height: 50),
-            SizedBox(
-              height: 100,
-              width: MediaQuery.of(context).size.width,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  SizedBox(
-                    height: 100,
-                    width: MediaQuery.of(context).size.width - 50,
-                    child: emailLoginButton(formKey),
-                  ),
-                  const SizedBox(width: 40),
-                  SizedBox(
-                    height: 100,
-                    width: MediaQuery.of(context).size.width - 60,
-                    child: emailSignupButton(formKey),
-                  ),
-                ],
+                    const SizedBox(width: 40),
+                    SizedBox(
+                      height: 100,
+                      width: MediaQuery.of(context).size.width - 60,
+                      child: emailSignupButton(formKey),
+                    ),
+                  ],
+                ),
               ),
-            )
-          ],
+              const Center(
+                child: Text('<-- Swipe -->'),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -228,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return signupButton(
       "Register new हाम्रो गाडी account",
       Ionicons.trail_sign,
-      ColorTheme().blackColor,
+      ColorTheme().greenColor,
       formKey,
     );
   }
@@ -259,7 +264,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   );
 
                   await AuthService().emailPasswordRegister(
-                      emailController.text, passwordController.text);
+                      emailController.text,
+                      passwordController.text,
+                      null,
+                      "user");
                 }
               },
               icon: Icon(

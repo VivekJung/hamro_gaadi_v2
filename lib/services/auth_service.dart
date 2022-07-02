@@ -26,7 +26,8 @@ class AuthService {
   }
 
   //register with email and password
-  Future emailPasswordRegister(String email, String password) async {
+  Future emailPasswordRegister(
+      String email, String password, String? name, String? type) async {
     log("Email :$email Psswd : $password");
     try {
       var result = await FirebaseAuth.instance
@@ -35,12 +36,14 @@ class AuthService {
       //create a new doc for the user with thee uid
       await FirestoreService(uid: user!.uid.toString()).updateUserInfo(
         user.uid.toString(),
-        "no name",
-        "user",
+        name ?? "no name",
+        type ?? "user",
         email,
         password,
       );
     } on FirebaseAuthException catch (e) {
+      log('Error while signing in $e');
+    } catch (e) {
       log('Error while signing in $e');
     }
   }

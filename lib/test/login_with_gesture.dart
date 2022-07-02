@@ -254,8 +254,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         content: Text('Sending request to cloud')),
                   );
 
-                  await AuthService().emailPasswordRegister(
-                      emailController.text, passwordController.text);
+                  // await AuthService().emailPasswordRegister(
+                  //     emailController.text, passwordController.text);
                 }
               },
               icon: Icon(
