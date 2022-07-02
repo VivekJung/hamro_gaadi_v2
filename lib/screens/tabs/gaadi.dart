@@ -169,38 +169,42 @@ class _GaadiScreenState extends State<GaadiScreen> {
                   var info = entries[index];
                   var filterParameter = info.gaadiID.toString();
                   if (selectedGaadi == "") {
-                    return ListTile(
-                      textColor: Colors.black,
-                      leading: info.details!.isIncome == true
-                          ? Icon(
-                              Icons.arrow_circle_up,
-                              color: ColorTheme().greenColor,
-                            )
-                          : Icon(
-                              Icons.arrow_circle_down,
-                              color: ColorTheme().primaryColor,
-                            ),
-                      title: Text(info.gaadiID.toString()),
-                      subtitle: Text(info.entryLog.toString()),
-                      trailing: Text(info.details!.amount.toString()),
+                    return Card(
+                      child: ListTile(
+                        textColor: Colors.black,
+                        leading: info.details!.isIncome == true
+                            ? Icon(
+                                Icons.arrow_circle_up,
+                                color: ColorTheme().greenColor,
+                              )
+                            : Icon(
+                                Icons.arrow_circle_down,
+                                color: ColorTheme().primaryColor,
+                              ),
+                        title: Text(info.gaadiID.toString()),
+                        subtitle: Text(info.entryLog.toString()),
+                        trailing: Text(info.details!.amount.toString()),
+                      ),
                     );
                   }
 
                   if (selectedGaadi == filterParameter) {
-                    return ListTile(
-                      textColor: Colors.black,
-                      leading: info.details!.isIncome == true
-                          ? Icon(
-                              Icons.arrow_circle_up,
-                              color: ColorTheme().greenColor,
-                            )
-                          : Icon(
-                              Icons.arrow_circle_down,
-                              color: ColorTheme().primaryColor,
-                            ),
-                      title: Text(info.gaadiID.toString()),
-                      subtitle: Text(info.entryLog.toString()),
-                      trailing: Text(info.details!.amount.toString()),
+                    return Card(
+                      child: ListTile(
+                        textColor: Colors.black,
+                        leading: info.details!.isIncome == true
+                            ? Icon(
+                                Icons.arrow_circle_up,
+                                color: ColorTheme().greenColor,
+                              )
+                            : Icon(
+                                Icons.arrow_circle_down,
+                                color: ColorTheme().primaryColor,
+                              ),
+                        title: Text(info.gaadiID.toString()),
+                        subtitle: Text(info.entryLog.toString()),
+                        trailing: Text(info.details!.amount.toString()),
+                      ),
                     );
                   } else {
                     return Container();

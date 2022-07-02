@@ -56,7 +56,7 @@ Map<String, dynamic> _$GaadiToJson(Gaadi instance) => <String, dynamic>{
       'gaadiID': instance.gaadiID,
     };
 
-User _$UsersFromJson(Map<String, dynamic> json) => User(
+UserModel _$UsersFromJson(Map<String, dynamic> json) => UserModel(
       gaadiList: (json['gaadiList'] as List<dynamic>?)
               ?.map((e) => Gaadi.fromJson(e as Map<String, dynamic>))
               .toList() ??
@@ -66,7 +66,7 @@ User _$UsersFromJson(Map<String, dynamic> json) => User(
       type: json['type'] as String? ?? "",
     );
 
-Map<String, dynamic> _$UsersToJson(User instance) => <String, dynamic>{
+Map<String, dynamic> _$UsersToJson(UserModel instance) => <String, dynamic>{
       'gaadiList': instance.gaadiList,
       'log': instance.log,
       'name': instance.name,

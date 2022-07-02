@@ -9,19 +9,7 @@ import 'package:rxdart/rxdart.dart';
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  //getting all list of gaadis
-  Future<List<Gaadi>> getAllGaadis() async {
-    var ref = _db.collection('gaadi');
-    var snapshot = await ref.get();
-    var data = snapshot.docs.map((e) => e.data()); // iterable map
-    var gaadis = data.map((json) => Gaadi.fromJson(json));
-    log("Let's see :::: ${gaadis.toList().length}");
-    return gaadis.toList();
-  }
-
-  //geting all list of entries
   Future<List<Entries>> getAllEntries() async {
-    //getting all data at once and not as stream
     var ref = _db.collection('entries');
     var snapshot = await ref.get();
     var data = snapshot.docs.map((e) => e.data()); // iterable map
@@ -30,16 +18,21 @@ class FirestoreService {
     return entries.toList();
   }
 
+  // Stream<List<Entries>> streamAllEntries() {
+  //   var ref = _db.collection('entries').snapshots();
+  //   return ref;
+  // }
+
   //getting user info according to the logged in user
-  Future<User> getUserInfo() async {
-    var ref = _db.collection('users').doc(AuthService().user!.uid);
+  Future<UserModel> getUserInfo() async {
+    var ref = _db.collection('users').doc();
     var snapshot = await ref.get(); //returns dynamic map
-    return User.fromJson(
+    return UserModel.fromJson(
         snapshot.data() ?? {}); // converting into our Users model.
   }
 
   //updating userid
-  //TODO: ADD GAADI AND ENTRIES
+
   final String? uid;
   FirestoreService({this.uid});
   Future<void> updateUserInfo(String id, String name, String type, String email,
@@ -59,25 +52,59 @@ class FirestoreService {
         .catchError((error) => log("Failed to add entry: $error"));
   }
 
-  //getting Stream of current user info ... listening real time!
-  Stream<User> streamCurrentUserInfo() {
-    // using rxdart function  to switch the streams... starting with userStream and swithching
-    return AuthService().userStream.switchMap((user) {
-      if (user != null) {
-        var ref = _db.collection('users').doc(user.uid);
-        return ref.snapshots().map((d) => User.fromJson(d.data()!));
-      } else {
-        //returning default user info. (we have defined the default values in models)
-        return Stream.fromIterable([User()]);
-      }
-    });
+  Future<void> addGaadi(String gaadiID, int seats, String? entryID) {
+    var user = AuthService().user!;
+    var ref = _db.collection('gaadi').doc(gaadiID);
+    if (entryID == "" || entryID!.isEmpty) {
+      Map<String, dynamic> data = {
+        "addedBy": user.uid,
+        "gaadiID": gaadiID,
+        "log": DateTime.now().toString(),
+        "seats": seats,
+      };
+      return ref
+          .set(data, SetOptions(merge: true))
+          .then((value) => log('Updated Gaadi!!'))
+          .catchError((error) => log("Failed to add entry: $error"));
+    } else {
+      Map<String, dynamic> data = {
+        "addedBy": user.uid,
+        "entries": [
+          {"entryID": entryID},
+        ],
+        "gaadiID": gaadiID,
+        "log": DateTime.now().toString(),
+        "seats": seats,
+      };
+
+      return ref
+          .set(data, SetOptions(merge: true))
+          .then((value) => log('Updated Gaadi with new entry!!'))
+          .catchError((error) => log("Failed to add entry: $error"));
+    }
   }
 
-  //*getting Stream of entries
-  Stream<List<Entries>> streamAllEntries() {
-    var stream = _db.collection('entries').snapshots().map(
-        (event) => event.docs.map((e) => Entries.fromJson(e.data())).toList());
-    return stream;
+  Future<void> addEntries(String entryID, int amount, String category,
+      bool isIncome, String remarks, String gaadiID) {
+    var user = AuthService().user!;
+    var ref = _db.collection('entries').doc(entryID);
+
+    var data = {
+      'addedBy': user.uid,
+      'entryID': entryID,
+      'entryLog': DateFormat.yMd().format(DateTime.now()),
+      'details': {
+        'amount': amount,
+        'category': category,
+        'isIncome': isIncome,
+        'remarks': remarks,
+      },
+      'gaadiID': gaadiID,
+    };
+    return ref
+        .set(data, SetOptions(merge: true))
+        .then((value) => log('Updated'))
+        .catchError((error) => log("Failed to add entry: $error"));
   }
 
   Future<void> updateEntries(Entries entries, Gaadi gaadi, Details details) {

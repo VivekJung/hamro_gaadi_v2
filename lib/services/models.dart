@@ -71,35 +71,22 @@ class Gaadi {
   });
   factory Gaadi.fromJson(Map<String, dynamic> json) => _$GaadiFromJson(json);
   Map<String, dynamic> toJson() => _$GaadiToJson(this);
-  //
-  // factory Gaadi.fromDocumentSnapshot(
-  //     {required DocumentSnapshot<Map<String, dynamic>> doc}) {
-  //   return Gaadi(
-  //     addedBy: doc.data()!["addedBy"] ?? "",
-  //     entries: (doc.data()!['entries'] as List<dynamic>?)
-  //             xxxxx ?.map((e) => Entries.fromDocumentSnapshot(e as Map<String, dynamic>))
-  //             .toList() ??
-  //         const [],
-  //     plateNumber: doc.data()!["plateNumber"] ?? "",
-  //     seats: doc.data()!["seats"] ?? 0,
-  //     gaadiID: doc.data()!["gaadiId"] ?? "",
-  //   );
-  // }
 }
 
 @JsonSerializable()
-class User {
+class UserModel {
   final List<Gaadi> gaadiList;
   final String log;
   final String name;
   final String type;
 
-  User({
+  UserModel({
     this.gaadiList = const [],
     this.log = "",
     this.name = "",
     this.type = "",
   });
-  factory User.fromJson(Map<String, dynamic> json) => _$UsersFromJson(json);
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UsersFromJson(json);
   Map<String, dynamic> toJson() => _$UsersToJson(this);
 }
