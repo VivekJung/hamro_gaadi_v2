@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:hamro_gaadi/resources/category_icon.dart';
 import 'package:hamro_gaadi/resources/color_theme.dart';
 import 'package:hamro_gaadi/resources/dateTime_extractor.dart';
 import 'package:hamro_gaadi/resources/test%20files/days_and_months.dart';
@@ -21,7 +22,6 @@ class DailyReports extends StatefulWidget {
 class _DailyReportsState extends State<DailyReports> {
   @override
   Widget build(BuildContext context) {
-    var entries = Provider.of<List<Entries>>(context);
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: getBody(),
@@ -29,6 +29,7 @@ class _DailyReportsState extends State<DailyReports> {
   }
 
   Widget getBody() {
+    var entries = Provider.of<List<Entries>>(context);
     var size = MediaQuery.of(context).size;
     return Container(
       margin: const EdgeInsets.only(bottom: 5),
@@ -84,7 +85,7 @@ class _DailyReportsState extends State<DailyReports> {
           incomeExpenseStatus(),
 
           // transaction summary
-          Expanded(child: transactionSection(context)),
+          Expanded(child: transactionSection(entries)),
         ],
       ),
     );
@@ -141,7 +142,7 @@ class _DailyReportsState extends State<DailyReports> {
     );
   }
 
-  Widget transactionSection(context) {
+  Widget transactionSection(List<Entries> entries) {
     return Card(
       child: Column(
         children: [
@@ -155,33 +156,40 @@ class _DailyReportsState extends State<DailyReports> {
               padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
               child: ListView.builder(
                   physics: const BouncingScrollPhysics(),
-                  itemCount: dailyTransaction.length,
+                  itemCount: entries.length,
                   itemBuilder: (context, index) {
-                    var transaction = dailyTransaction[index];
+                    var transaction = entries[index];
                     return Card(
                       child: ListTile(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: ((context) =>
-                                  TransactionDetailScreen(index: transaction)),
+                          //*?How icon color works
+
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: ((context) => TransactionDetailScreen(
+                                    index: transaction)),
+                              ),
+                            );
+                          },
+                          leading: CircleAvatar(
+                            child: Center(
+                              child: Icon(
+                                getCategoryWiseIcon(
+                                    transaction.details!.category.toString()),
+                              ),
                             ),
-                          );
-                        },
-                        leading: const CircleAvatar(
-                          child: Center(child: Icon(FeatherIcons.home)),
-                        ),
-                        title: Text(transaction['name'].toString()),
-                        subtitle: Text(transaction['remarks'].toString()),
-                        trailing: Text(
-                          transaction['type'].toString(),
-                          style: TextStyle(
-                              color: transaction['type'] == "IN"
-                                  ? Colors.green
-                                  : Colors.red),
-                        ),
-                      ),
+                          ),
+                          title: Text(transaction.details!.category.toString()),
+                          subtitle:
+                              Text(transaction.details!.remarks.toString()),
+                          trailing: transaction.details!.isIncome == true
+                              ? Text("IN",
+                                  style:
+                                      TextStyle(color: ColorTheme().greenColor))
+                              : Text("OUT",
+                                  style: TextStyle(
+                                      color: ColorTheme().primaryColor))),
                     );
                   }),
             ),
