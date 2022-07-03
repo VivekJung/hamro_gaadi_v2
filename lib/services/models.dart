@@ -90,3 +90,17 @@ class UserModel {
       _$UsersFromJson(json);
   Map<String, dynamic> toJson() => _$UsersToJson(this);
 }
+
+class EntryTransaction {
+  final String? entryID;
+  final int? amt;
+
+  EntryTransaction({this.entryID, this.amt});
+  factory EntryTransaction.fromDocumentSnapshot(
+      {required DocumentSnapshot<Map<String, dynamic>> doc}) {
+    return EntryTransaction(
+      entryID: doc.data()!['entryID'],
+      amt: doc.data()!['amt'],
+    );
+  }
+}

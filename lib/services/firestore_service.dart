@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hamro_gaadi/services/auth_service.dart';
 import 'package:hamro_gaadi/services/models.dart';
-import 'package:intl/intl.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -102,27 +101,23 @@ class FirestoreService {
         .catchError((error) => log("Failed to add entry: $error"));
   }
 
-  Future<void> addToAmountCollection(int amt, bool isIncome) {
-    // List newAmt = [amt];
+  Future addToAmountCollection(int amt, bool isIncome, String entryID) async {
+    List newAmt = [
+      {"amt": amt, "entryID": entryID}
+    ];
 
     if (isIncome == true) {
-      var ref = _db.collection('transaction').doc("all");
+      var ref = _db.collection('income').doc("incomeData");
 
-      return ref
-          .set({
-            "income": FieldValue.arrayUnion([amt])
-          }, SetOptions(merge: true))
-          .then((value) => log('Updated'))
-          .catchError((error) => log("Failed to add entry: $error"));
+      return ref.update({'info': FieldValue.arrayUnion(newAmt)})
+        ..then((value) => log('Updated'))
+            .catchError((error) => log("Failed to add entry: $error"));
     } else {
-      var ref = _db.collection('transaction').doc("all");
-
+      var ref = _db.collection('expenses').doc("expenseData");
       return ref
-          .set({
-            "expense": FieldValue.arrayUnion([amt])
-          }, SetOptions(merge: true))
-          .then((value) => log('Updated'))
-          .catchError((error) => log("Failed to add entry: $error"));
+          .set({'info': FieldValue.arrayUnion(newAmt)}, SetOptions(merge: true))
+        ..then((value) => log('Updated'))
+            .catchError((error) => log("Failed to add entry: $error"));
     }
   }
 
