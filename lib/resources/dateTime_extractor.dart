@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:ffi';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class DateTimeExtractor {
@@ -59,4 +60,10 @@ class DateTimeExtractor {
     }
     return indexForMonth;
   }
+}
+
+formatTimestamp(Timestamp timestamp) {
+  String convertedDate;
+  convertedDate = DateFormat.yMMMd().add_jm().format(timestamp.toDate());
+  return convertedDate;
 }

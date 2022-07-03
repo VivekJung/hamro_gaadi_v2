@@ -12,7 +12,7 @@ Entries _$EntriesFromJson(Map<String, dynamic> json) => Entries(
           ? null
           : Details.fromJson(json['details'] as Map<String, dynamic>),
       entryID: json['entryID'] as String? ?? "",
-      entryLog: json['entryLog'] as String? ?? "",
+      entryLog: json['entryLog'].toString(),
       gaadiID: json['gaadiID'] as String? ?? "",
     );
 
@@ -20,7 +20,7 @@ Map<String, dynamic> _$EntriesToJson(Entries instance) => <String, dynamic>{
       'addedBy': instance.addedBy,
       'details': instance.details,
       'entryID': instance.entryID,
-      'entryLog': instance.entryLog,
+      'entryLog': instance.entryLog.toString(),
       'gaadiID': instance.gaadiID,
     };
 
@@ -44,14 +44,14 @@ Gaadi _$GaadiFromJson(Map<String, dynamic> json) => Gaadi(
             ?.map((e) => Entries.fromJson(e as Map<String, dynamic>))
             .toList() ??
         const [],
-    plateNumber: json['plateNumber'] as String? ?? "",
+    log: json['log'] as String? ?? "",
     seats: json['seats'] as int? ?? 0,
     gaadiID: json['gaadiID'] as String? ?? "");
 
 Map<String, dynamic> _$GaadiToJson(Gaadi instance) => <String, dynamic>{
       'addedBy': instance.addedBy,
       'entries': instance.entries,
-      'plateNumber': instance.plateNumber,
+      'log': instance.log,
       'seats': instance.seats,
       'gaadiID': instance.gaadiID,
     };

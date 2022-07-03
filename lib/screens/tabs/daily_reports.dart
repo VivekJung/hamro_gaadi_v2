@@ -1,12 +1,15 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:hamro_gaadi/resources/color_theme.dart';
 import 'package:hamro_gaadi/resources/dateTime_extractor.dart';
 import 'package:hamro_gaadi/resources/test%20files/days_and_months.dart';
 import 'package:hamro_gaadi/screens/transaction_details.dart';
+import 'package:hamro_gaadi/services/models.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:provider/provider.dart';
 
 class DailyReports extends StatefulWidget {
   const DailyReports({Key? key}) : super(key: key);
@@ -18,13 +21,14 @@ class DailyReports extends StatefulWidget {
 class _DailyReportsState extends State<DailyReports> {
   @override
   Widget build(BuildContext context) {
+    var entries = Provider.of<List<Entries>>(context);
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: getBody(context),
+      body: getBody(),
     );
   }
 
-  Widget getBody(context) {
+  Widget getBody() {
     var size = MediaQuery.of(context).size;
     return Container(
       margin: const EdgeInsets.only(bottom: 5),

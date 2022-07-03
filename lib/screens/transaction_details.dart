@@ -13,6 +13,7 @@ class _MyWidgetState extends State<TransactionDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Center(
         child: Text(
           widget.index['name'],

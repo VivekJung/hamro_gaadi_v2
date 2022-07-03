@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hamro_gaadi/resources/color_theme.dart';
+import 'package:hamro_gaadi/resources/dateTime_extractor.dart';
 
 import 'package:hamro_gaadi/services/firestore_service.dart';
+import 'package:intl/intl.dart';
 
 import 'package:ionicons/ionicons.dart';
 
@@ -102,13 +104,13 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   }
 
   addEntryBtn() {
-    //TODO: MAKE ADD FORM!
-    String gaadiID = "Na 7 kha 1448";
-    var amount = 84000;
-    String entryID = "entry6",
-        remarks = "Travel Income 2 trips",
-        category = "Income";
-    bool isIncome = true;
+    //TODO: MAKE ADD FORM! and when an entry is added update it into gaadi as well
+    String gaadiID = "Ba 4 kha 4747";
+    var amount = 6000;
+    String entryID = "entry7",
+        remarks = "Gaadi charge gareko",
+        category = "Expense";
+    bool isIncome = false;
     return Center(
       child: Column(
         children: [
@@ -165,7 +167,13 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                     return Card(
                       child: ListTile(
                         title: Text(e['details']['category']),
-                        subtitle: Text(e['details']['remarks']),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(e['details']['remarks']),
+                            Text((e['entryLog']).toString()),
+                          ],
+                        ),
                         trailing: Text(e['details']['amount'].toString()),
                       ),
                     );

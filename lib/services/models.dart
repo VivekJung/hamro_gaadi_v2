@@ -7,14 +7,14 @@ class Entries {
   String? addedBy;
   Details? details;
   String? entryID;
-  String? entryLog;
+  dynamic entryLog;
   String? gaadiID;
 
   Entries({
     this.addedBy = "",
     this.details,
     this.entryID = "",
-    this.entryLog = "",
+    this.entryLog,
     this.gaadiID = "",
   });
 
@@ -58,14 +58,14 @@ class Details {
 class Gaadi {
   final String addedBy;
   final List<Entries> entries;
-  final String plateNumber;
+  final String log;
   final int seats;
   final String gaadiID;
 
   Gaadi({
     this.addedBy = "",
     this.entries = const [],
-    this.plateNumber = "",
+    this.log = "",
     this.seats = 0,
     this.gaadiID = "",
   });
