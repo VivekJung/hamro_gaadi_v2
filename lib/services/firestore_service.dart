@@ -102,6 +102,30 @@ class FirestoreService {
         .catchError((error) => log("Failed to add entry: $error"));
   }
 
+  Future<void> addToAmountCollection(int amt, bool isIncome) {
+    // List newAmt = [amt];
+
+    if (isIncome == true) {
+      var ref = _db.collection('transaction').doc("all");
+
+      return ref
+          .set({
+            "income": FieldValue.arrayUnion([amt])
+          }, SetOptions(merge: true))
+          .then((value) => log('Updated'))
+          .catchError((error) => log("Failed to add entry: $error"));
+    } else {
+      var ref = _db.collection('transaction').doc("all");
+
+      return ref
+          .set({
+            "expense": FieldValue.arrayUnion([amt])
+          }, SetOptions(merge: true))
+          .then((value) => log('Updated'))
+          .catchError((error) => log("Failed to add entry: $error"));
+    }
+  }
+
   //*getting Stream of gaadi according to user
   Stream<List<Gaadi>> streamAllGaadi() {
     var stream = _db

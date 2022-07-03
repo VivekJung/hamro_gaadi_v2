@@ -105,20 +105,22 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   addEntryBtn() {
     //TODO: MAKE ADD FORM! and when an entry is added update it into gaadi as well
-    String gaadiID = "Ba 4 kha 4747";
-    var amount = 200;
-    String entryID = "entry9",
-        remarks = "Route permit settlement",
-        category = "Miscellaneous";
+    String gaadiID = "Na 7 kha 1448";
+    var amount = 10000;
+    String entryID = "entry14",
+        remarks = "ksita payment for $gaadiID",
+        category = "Bank Transaction";
     bool isIncome = false;
     return Center(
       child: Column(
         children: [
           CircleAvatar(
             child: IconButton(
-              onPressed: () {
-                FirestoreService().addEntries(
+              onPressed: () async {
+                await FirestoreService().addEntries(
                     entryID, amount, category, isIncome, remarks, gaadiID);
+                await FirestoreService()
+                    .addToAmountCollection(amount, isIncome);
               },
               icon: const Icon(
                 Icons.add_task,

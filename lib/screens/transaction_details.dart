@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hamro_gaadi/services/models.dart';
 
 class TransactionDetailScreen extends StatefulWidget {
-  final dynamic index;
+  final Entries index;
   const TransactionDetailScreen({Key? key, required this.index})
       : super(key: key);
 
@@ -16,8 +17,8 @@ class _MyWidgetState extends State<TransactionDetailScreen> {
       backgroundColor: Colors.transparent,
       body: Center(
         child: Text(
-          widget.index['name'],
-          style: TextStyle(color: Colors.white),
+          widget.index.details!.remarks ?? "no data received",
+          style: const TextStyle(color: Colors.white),
         ),
       ),
     );

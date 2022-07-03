@@ -1,14 +1,15 @@
 import 'dart:developer';
 
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:hamro_gaadi/resources/category_icon.dart';
 import 'package:hamro_gaadi/resources/color_theme.dart';
 import 'package:hamro_gaadi/resources/dateTime_extractor.dart';
 import 'package:hamro_gaadi/resources/test%20files/days_and_months.dart';
 import 'package:hamro_gaadi/screens/transaction_details.dart';
+import 'package:hamro_gaadi/services/firestore_service.dart';
 import 'package:hamro_gaadi/services/models.dart';
+import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:provider/provider.dart';
 
@@ -82,7 +83,7 @@ class _DailyReportsState extends State<DailyReports> {
           ),
 
           //income/expense  card
-          incomeExpenseStatus(),
+          incomeExpenseStatus(entries),
 
           // transaction summary
           Expanded(child: transactionSection(entries)),
@@ -91,7 +92,7 @@ class _DailyReportsState extends State<DailyReports> {
     );
   }
 
-  Card incomeExpenseStatus() {
+  Card incomeExpenseStatus(List<Entries> entries) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -143,13 +144,14 @@ class _DailyReportsState extends State<DailyReports> {
   }
 
   Widget transactionSection(List<Entries> entries) {
+    int? totalAmt;
     return Card(
       child: Column(
         children: [
           const SizedBox(height: 5),
           Text(
-            "Transactions count : ${dailyTransaction.length}",
-            style: const TextStyle(fontSize: 8, color: Colors.red),
+            "Transactions count : ${entries.length}",
+            style: const TextStyle(fontSize: 10, color: Colors.red),
           ),
           Expanded(
             child: Padding(
@@ -159,6 +161,8 @@ class _DailyReportsState extends State<DailyReports> {
                   itemCount: entries.length,
                   itemBuilder: (context, index) {
                     var transaction = entries[index];
+                    DateTime d = DateTime.parse(transaction.entryLog);
+
                     return Card(
                       child: ListTile(
                           //*?How icon color works
@@ -181,8 +185,13 @@ class _DailyReportsState extends State<DailyReports> {
                             ),
                           ),
                           title: Text(transaction.details!.category.toString()),
-                          subtitle:
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Text(transaction.details!.remarks.toString()),
+                              Text("$d"),
+                            ],
+                          ),
                           trailing: transaction.details!.isIncome == true
                               ? Text("IN",
                                   style:
