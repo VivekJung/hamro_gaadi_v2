@@ -3,16 +3,35 @@ import 'package:json_annotation/json_annotation.dart';
 part 'models.g.dart';
 
 @JsonSerializable()
+class Details {
+  int amount;
+  String category;
+  bool isIncome;
+  String remarks;
+
+  Details({
+    this.amount = 0,
+    this.category = "",
+    this.isIncome = false,
+    this.remarks = "",
+  });
+
+  factory Details.fromJson(Map<String, dynamic> json) =>
+      _$DetailsFromJson(json);
+  Map<String, dynamic> toJson() => _$DetailsToJson(this);
+}
+
+@JsonSerializable()
 class Entries {
   String? addedBy;
-  Details? details;
+  Details details;
   String? entryID;
-  dynamic entryLog;
+  String? entryLog;
   String? gaadiID;
 
   Entries({
     this.addedBy = "",
-    this.details,
+    required this.details,
     this.entryID = "",
     this.entryLog,
     this.gaadiID = "",
@@ -31,27 +50,9 @@ class Entries {
       entryID: doc.data()!['entryID'],
       entryLog: doc.data()!['entryLog'],
       gaadiID: doc.data()!['gaadiID'],
+      details: doc.data()!['details'],
     );
   }
-}
-
-@JsonSerializable()
-class Details {
-  int? amount;
-  String? category;
-  bool? isIncome;
-  String? remarks;
-
-  Details({
-    this.amount = 0,
-    this.category = "",
-    this.isIncome = false,
-    this.remarks = "",
-  });
-
-  factory Details.fromJson(Map<String, dynamic> json) =>
-      _$DetailsFromJson(json);
-  Map<String, dynamic> toJson() => _$DetailsToJson(this);
 }
 
 @JsonSerializable()

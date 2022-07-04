@@ -172,7 +172,7 @@ class _GaadiScreenState extends State<GaadiScreen> {
                     return Card(
                       child: ListTile(
                         textColor: Colors.black,
-                        leading: info.details!.isIncome == true
+                        leading: info.details.isIncome == true
                             ? Icon(
                                 Icons.arrow_circle_up,
                                 color: ColorTheme().greenColor,
@@ -183,7 +183,7 @@ class _GaadiScreenState extends State<GaadiScreen> {
                               ),
                         title: Text(info.gaadiID.toString()),
                         subtitle: Text(info.entryLog.toString()),
-                        trailing: Text(info.details!.amount.toString()),
+                        trailing: Text(info.details.amount.toString()),
                       ),
                     );
                   }
@@ -192,7 +192,7 @@ class _GaadiScreenState extends State<GaadiScreen> {
                     return Card(
                       child: ListTile(
                         textColor: Colors.black,
-                        leading: info.details!.isIncome == true
+                        leading: info.details.isIncome == true
                             ? Icon(
                                 Icons.arrow_circle_up,
                                 color: ColorTheme().greenColor,
@@ -203,7 +203,7 @@ class _GaadiScreenState extends State<GaadiScreen> {
                               ),
                         title: Text(info.gaadiID.toString()),
                         subtitle: Text(info.entryLog.toString()),
-                        trailing: Text(info.details!.amount.toString()),
+                        trailing: Text(info.details.amount.toString()),
                       ),
                     );
                   } else {

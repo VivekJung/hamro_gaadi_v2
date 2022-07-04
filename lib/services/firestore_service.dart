@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hamro_gaadi/services/auth_service.dart';
 import 'package:hamro_gaadi/services/models.dart';
@@ -77,6 +76,15 @@ class FirestoreService {
     }
   }
 
+  addEntry(Entries entry) async {
+    return await _db
+        .collection('entries')
+        .doc(entry.entryID)
+        .set(entry.toJson(), SetOptions(merge: true))
+        .then((value) => log('Updated Gaadi with new entry!!'))
+        .catchError((error) => log("Failed to add entry: $error"));
+  }
+
   Future<void> addEntries(String entryID, int amount, String category,
       bool isIncome, String remarks, String gaadiID) {
     var user = AuthService().user!;
@@ -95,10 +103,10 @@ class FirestoreService {
       },
       'gaadiID': gaadiID,
     };
-    return ref
-        .set(data, SetOptions(merge: true))
-        .then((value) => log('Updated'))
-        .catchError((error) => log("Failed to add entry: $error"));
+    return ref.set(data, SetOptions(merge: true)).then((value) {
+      log('Updated');
+      // updateTransaction(isFreshEntry, entry);
+    }).catchError((error) => log("Failed to add entry: $error"));
   }
 
   Future addToAmountCollection(int amt, bool isIncome, String entryID) async {
@@ -129,40 +137,41 @@ class FirestoreService {
     }
   }
 
-  Future updateTransaction(int amt, bool isIncome, bool isFreshEntry) {
+  Future updateTransaction(bool isFreshEntry, Entries entry) {
     //this function adds the transaction amount as income or expense and substracts if transaction is not freshentry
     Map<String, dynamic> data = {};
-    if (isIncome == true) {
+    if (entry.details.isIncome == true) {
       var ref = _db.collection('transaction').doc('income');
 
       if (isFreshEntry == true) {
         data = {
-          'total': FieldValue.increment(amt),
+          'total': FieldValue.increment(entry.details.amount!.toInt()),
         };
       }
       //substracting the amount
       else {
         data = {
-          'total': FieldValue.increment(-amt),
+          'total': FieldValue.increment(-entry.details.amount!.toInt()),
         };
       }
       return ref.set(data, SetOptions(merge: true)).then((value) => (log(
-          'Updated with $amt fershEntry: $isFreshEntry isIncome: $isIncome')));
+          'Updated with ${entry.details.amount} fershEntry: $isFreshEntry isIncome: ${entry.details.isIncome}')));
     } else {
       var ref = _db.collection('transaction').doc('expense');
       if (isFreshEntry == true) {
         data = {
-          'total': FieldValue.increment(amt),
+          'total': FieldValue.increment(entry.details.amount!.toInt()),
+          'entries': FieldValue.arrayUnion([entry.entryID]),
         };
       }
       //substracting the amount
       else {
         data = {
-          'total': FieldValue.increment(-amt),
+          'total': FieldValue.increment(-entry.details.amount!.toInt()),
         };
       }
       return ref.set(data, SetOptions(merge: true)).then((value) => (log(
-          'Updated with $amt fershEntry: $isFreshEntry isIncome: $isIncome')));
+          'Updated with ${entry.details.amount!.toInt()} fershEntry: $isFreshEntry isIncome: ${entry.details.isIncome}')));
     }
   }
 

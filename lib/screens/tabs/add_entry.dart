@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hamro_gaadi/resources/color_theme.dart';
+import 'package:hamro_gaadi/services/auth_service.dart';
 
 import 'package:hamro_gaadi/services/firestore_service.dart';
+import 'package:hamro_gaadi/services/models.dart';
 
 import 'package:ionicons/ionicons.dart';
 
@@ -15,6 +17,9 @@ class AddEntryScreen extends StatefulWidget {
 
 class _AddEntryScreenState extends State<AddEntryScreen> {
   var selectedGaadi = "";
+
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,21 +108,36 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   addEntryBtn() {
     //TODO: MAKE ADD FORM! and when an entry is added update it into gaadi as well
+    String category = "Banking Transaction";
+    String remarks = "Kista for gaadi ";
+    int amt = 99999;
+    bool isIncome = true;
+    bool isFreshEntry = false;
+    String entryID = "entry20";
     String gaadiID = "Na 7 kha 1448";
-    var amount = 1515;
-    String entryID = "entry12",
-        remarks = "ksita payment for $gaadiID",
-        category = "Bank Transaction";
-    bool isIncome = false;
+
+    Details details = Details(
+      amount: amt,
+      category: category,
+      isIncome: isIncome,
+      remarks: remarks,
+    );
+
+    Entries entry = Entries(
+      addedBy: AuthService().user!.uid,
+      entryID: entryID,
+      entryLog: "${DateTime.now()}",
+      gaadiID: gaadiID,
+      details: details,
+    );
+
     return Center(
       child: Column(
         children: [
           CircleAvatar(
             child: IconButton(
-              onPressed: () async {
-                await FirestoreService().addEntries(
-                    entryID, amount, category, isIncome, remarks, gaadiID);
-                await FirestoreService().updateTransaction(amount, true, false);
+              onPressed: () {
+                buildEntryForm(isFreshEntry, entry);
               },
               icon: const Icon(
                 Icons.add_task,
@@ -130,6 +150,77 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         ],
       ),
     );
+  }
+
+  buildEntryForm(bool isFreshEntry, Entries entry) {
+    return showDialog(
+        useSafeArea: true,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Container(
+              height: MediaQuery.of(context).size.height / 2,
+              margin: const EdgeInsets.all(10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: InkResponse(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const CircleAvatar(
+                        child: Icon(Icons.close),
+                      ),
+                    ),
+                  ),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Name',
+                            icon: Icon(Icons.account_box),
+                          ),
+                        ),
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Email',
+                            icon: Icon(Icons.email),
+                          ),
+                        ),
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Message',
+                            icon: Icon(Icons.message),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            child: const Text("Save"),
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
+                                await FirestoreService().addEntry(entry);
+                                await FirestoreService()
+                                    .updateTransaction(isFreshEntry, entry);
+                              }
+                            },
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   streamOfAllEntries() {

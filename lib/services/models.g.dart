@@ -8,17 +8,15 @@ part of 'models.dart';
 
 Entries _$EntriesFromJson(Map<String, dynamic> json) => Entries(
       addedBy: json['addedBy'] as String? ?? "",
-      details: json['details'] == null
-          ? null
-          : Details.fromJson(json['details'] as Map<String, dynamic>),
+      details: Details.fromJson(json['details'] as Map<String, dynamic>),
       entryID: json['entryID'] as String? ?? "",
-      entryLog: json['entryLog'].toString(),
+      entryLog: json['entryLog'] as String? ?? "",
       gaadiID: json['gaadiID'] as String? ?? "",
     );
 
 Map<String, dynamic> _$EntriesToJson(Entries instance) => <String, dynamic>{
       'addedBy': instance.addedBy,
-      'details': instance.details,
+      'details': instance.details.toJson(),
       'entryID': instance.entryID,
       'entryLog': instance.entryLog.toString(),
       'gaadiID': instance.gaadiID,
@@ -27,7 +25,7 @@ Map<String, dynamic> _$EntriesToJson(Entries instance) => <String, dynamic>{
 Details _$DetailsFromJson(Map<String, dynamic> json) => Details(
       amount: json['amount'] as int? ?? 0,
       category: json['category'] as String? ?? "",
-      isIncome: json['isIncome'] as bool? ?? false,
+      isIncome: json['isIncome'] as bool,
       remarks: json['remarks'] as String? ?? "",
     );
 

@@ -17,7 +17,7 @@ class _MyWidgetState extends State<TransactionDetailScreen> {
       backgroundColor: Colors.transparent,
       body: Center(
         child: Text(
-          widget.index.details!.remarks ?? "no data received",
+          widget.index.details.remarks,
           style: const TextStyle(color: Colors.white),
         ),
       ),

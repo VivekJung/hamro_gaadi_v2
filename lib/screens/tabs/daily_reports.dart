@@ -84,8 +84,6 @@ class _DailyReportsState extends State<DailyReports> {
 
           //income/expense  card
           incomeExpenseStatus(entries),
-          testbtn(),
-          // FirestoreService().getSpecificdata("entry8"),
 
           // transaction summary
           Expanded(child: transactionSection(entries)),
@@ -94,14 +92,14 @@ class _DailyReportsState extends State<DailyReports> {
     );
   }
 
-  testbtn() {
-    return IconButton(
-        onPressed: () async {
-          await FirestoreService().updateTransaction(100, true, false);
-          // await FirestoreService().getSpecificdata("entry8");
-        },
-        icon: const Icon(Icons.mail, color: Colors.white));
-  }
+  // testbtn() {
+  //   return IconButton(
+  //       onPressed: () async {
+  //         await FirestoreService().updateTransaction(100, true, false, "entry5");
+  //         // await FirestoreService().getSpecificdata("entry8");
+  //       },
+  //       icon: const Icon(Icons.mail, color: Colors.white));
+  // }
 
   Card incomeExpenseStatus(List<Entries> entries) {
     return Card(
@@ -172,7 +170,8 @@ class _DailyReportsState extends State<DailyReports> {
                   itemCount: entries.length,
                   itemBuilder: (context, index) {
                     var transaction = entries[index];
-                    DateTime d = DateTime.parse(transaction.entryLog);
+                    DateTime d =
+                        DateTime.parse(transaction.entryLog.toString());
 
                     return Card(
                       child: ListTile(
@@ -191,19 +190,19 @@ class _DailyReportsState extends State<DailyReports> {
                             child: Center(
                               child: Icon(
                                 getCategoryWiseIcon(
-                                    transaction.details!.category.toString()),
+                                    transaction.details.category.toString()),
                               ),
                             ),
                           ),
-                          title: Text(transaction.details!.category.toString()),
+                          title: Text(transaction.details.category.toString()),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(transaction.details!.remarks.toString()),
+                              Text(transaction.details.remarks.toString()),
                               Text("$d"),
                             ],
                           ),
-                          trailing: transaction.details!.isIncome == true
+                          trailing: transaction.details.isIncome == true
                               ? Text("IN",
                                   style:
                                       TextStyle(color: ColorTheme().greenColor))
