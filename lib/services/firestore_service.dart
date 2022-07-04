@@ -102,22 +102,67 @@ class FirestoreService {
   }
 
   Future addToAmountCollection(int amt, bool isIncome, String entryID) async {
-    List newAmt = [
+    List<Map<String, dynamic>> newAmt = [
       {"amt": amt, "entryID": entryID}
     ];
+    Map<String, dynamic> newAmtStatus = {'info': FieldValue.arrayUnion(newAmt)};
 
     if (isIncome == true) {
       var ref = _db.collection('income').doc("incomeData");
+      var snap = await ref.get();
+      List getAllData = snap.get('info');
 
-      return ref.update({'info': FieldValue.arrayUnion(newAmt)})
-        ..then((value) => log('Updated'))
-            .catchError((error) => log("Failed to add entry: $error"));
+      if (getAllData.contains({"entryID": entryID})) {
+        return ref.update({
+          "info": FieldValue.arrayRemove(newAmt),
+        });
+      } else {
+        return ref.set(newAmtStatus, SetOptions(merge: true))
+          ..then((value) => log('Updated Income with $newAmt'))
+              .catchError((error) => log("Failed to add entry: $error"));
+      }
     } else {
       var ref = _db.collection('expenses').doc("expenseData");
-      return ref
-          .set({'info': FieldValue.arrayUnion(newAmt)}, SetOptions(merge: true))
-        ..then((value) => log('Updated'))
+      return ref.set(newAmtStatus, SetOptions(merge: true))
+        ..then((value) => log('Updated Expense with $newAmt'))
             .catchError((error) => log("Failed to add entry: $error"));
+    }
+  }
+
+  Future updateTransaction(int amt, bool isIncome, bool isFreshEntry) {
+    //this function adds the transaction amount as income or expense and substracts if transaction is not freshentry
+    Map<String, dynamic> data = {};
+    if (isIncome == true) {
+      var ref = _db.collection('transaction').doc('income');
+
+      if (isFreshEntry == true) {
+        data = {
+          'total': FieldValue.increment(amt),
+        };
+      }
+      //substracting the amount
+      else {
+        data = {
+          'total': FieldValue.increment(-amt),
+        };
+      }
+      return ref.set(data, SetOptions(merge: true)).then((value) => (log(
+          'Updated with $amt fershEntry: $isFreshEntry isIncome: $isIncome')));
+    } else {
+      var ref = _db.collection('transaction').doc('expense');
+      if (isFreshEntry == true) {
+        data = {
+          'total': FieldValue.increment(amt),
+        };
+      }
+      //substracting the amount
+      else {
+        data = {
+          'total': FieldValue.increment(-amt),
+        };
+      }
+      return ref.set(data, SetOptions(merge: true)).then((value) => (log(
+          'Updated with $amt fershEntry: $isFreshEntry isIncome: $isIncome')));
     }
   }
 
@@ -146,5 +191,17 @@ class FirestoreService {
             event.docs.map((e) => Entries.fromJson(e.data())).toList());
     log(stream.toString());
     return stream;
+  }
+
+  getSpecificdata(entryID) {
+    var col = _db.collection('income');
+    var ref = col.where('info', arrayContains: {"entryID": entryID});
+
+    var result = ref
+        .get()
+        .then((value) => log('Items found: $value '))
+        .catchError((error) => log("Failed to add entry: $error"));
+    log(result.toString());
+    return result;
   }
 }

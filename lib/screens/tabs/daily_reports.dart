@@ -9,7 +9,7 @@ import 'package:hamro_gaadi/resources/test%20files/days_and_months.dart';
 import 'package:hamro_gaadi/screens/transaction_details.dart';
 import 'package:hamro_gaadi/services/firestore_service.dart';
 import 'package:hamro_gaadi/services/models.dart';
-import 'package:intl/intl.dart';
+
 import 'package:ionicons/ionicons.dart';
 import 'package:provider/provider.dart';
 
@@ -84,12 +84,23 @@ class _DailyReportsState extends State<DailyReports> {
 
           //income/expense  card
           incomeExpenseStatus(entries),
+          testbtn(),
+          // FirestoreService().getSpecificdata("entry8"),
 
           // transaction summary
           Expanded(child: transactionSection(entries)),
         ],
       ),
     );
+  }
+
+  testbtn() {
+    return IconButton(
+        onPressed: () async {
+          await FirestoreService().updateTransaction(100, true, false);
+          // await FirestoreService().getSpecificdata("entry8");
+        },
+        icon: const Icon(Icons.mail, color: Colors.white));
   }
 
   Card incomeExpenseStatus(List<Entries> entries) {

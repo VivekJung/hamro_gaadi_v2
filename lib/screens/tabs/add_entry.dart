@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hamro_gaadi/resources/color_theme.dart';
-import 'package:hamro_gaadi/resources/dateTime_extractor.dart';
 
 import 'package:hamro_gaadi/services/firestore_service.dart';
-import 'package:intl/intl.dart';
 
 import 'package:ionicons/ionicons.dart';
 
@@ -107,7 +105,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     //TODO: MAKE ADD FORM! and when an entry is added update it into gaadi as well
     String gaadiID = "Na 7 kha 1448";
     var amount = 1515;
-    String entryID = "entry10",
+    String entryID = "entry12",
         remarks = "ksita payment for $gaadiID",
         category = "Bank Transaction";
     bool isIncome = false;
@@ -119,8 +117,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
               onPressed: () async {
                 await FirestoreService().addEntries(
                     entryID, amount, category, isIncome, remarks, gaadiID);
-                await FirestoreService()
-                    .addToAmountCollection(amount, isIncome, entryID);
+                await FirestoreService().updateTransaction(amount, true, false);
               },
               icon: const Icon(
                 Icons.add_task,
