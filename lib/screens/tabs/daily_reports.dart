@@ -174,6 +174,12 @@ class _DailyReportsState extends State<DailyReports> {
                         DateTime.parse(transaction.entryLog.toString());
 
                     return Card(
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Colors.deepOrangeAccent.withOpacity(0.1),
+                        ),
+                      ),
                       child: ListTile(
                           //*?How icon color works
 

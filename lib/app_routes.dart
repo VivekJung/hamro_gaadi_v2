@@ -4,6 +4,7 @@ import 'package:hamro_gaadi/screens/home_screen.dart';
 import 'package:hamro_gaadi/screens/login.dart';
 import 'package:hamro_gaadi/screens/route_checki_screen.dart';
 import 'package:hamro_gaadi/screens/tabs/daily_reports.dart';
+import 'package:hamro_gaadi/screens/tabs/list_entries_gaadis.dart';
 import 'package:hamro_gaadi/screens/tabs/stats_screen.dart';
 
 Map<String, Widget Function(BuildContext)> appRoutes() {
@@ -14,5 +15,6 @@ Map<String, Widget Function(BuildContext)> appRoutes() {
     //yet to be implemented
     '/dailyReports': (context) => const DailyReports(),
     '/statistics': (context) => const StatsScreen(),
+    '/addEntry': (context) => const ListEntriesAndGaadis(),
   };
 }

@@ -145,13 +145,13 @@ class FirestoreService {
 
       if (isFreshEntry == true) {
         data = {
-          'total': FieldValue.increment(entry.details.amount!.toInt()),
+          'total': FieldValue.increment(entry.details.amount.toInt()),
         };
       }
       //substracting the amount
       else {
         data = {
-          'total': FieldValue.increment(-entry.details.amount!.toInt()),
+          'total': FieldValue.increment(-entry.details.amount.toInt()),
         };
       }
       return ref.set(data, SetOptions(merge: true)).then((value) => (log(
@@ -160,18 +160,18 @@ class FirestoreService {
       var ref = _db.collection('transaction').doc('expense');
       if (isFreshEntry == true) {
         data = {
-          'total': FieldValue.increment(entry.details.amount!.toInt()),
+          'total': FieldValue.increment(entry.details.amount.toInt()),
           'entries': FieldValue.arrayUnion([entry.entryID]),
         };
       }
       //substracting the amount
       else {
         data = {
-          'total': FieldValue.increment(-entry.details.amount!.toInt()),
+          'total': FieldValue.increment(-entry.details.amount.toInt()),
         };
       }
       return ref.set(data, SetOptions(merge: true)).then((value) => (log(
-          'Updated with ${entry.details.amount!.toInt()} fershEntry: $isFreshEntry isIncome: ${entry.details.isIncome}')));
+          'Updated with ${entry.details.amount.toInt()} fershEntry: $isFreshEntry isIncome: ${entry.details.isIncome}')));
     }
   }
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hamro_gaadi/resources/color_theme.dart';
 import 'package:hamro_gaadi/screens/tabs/daily_reports.dart';
 import 'package:hamro_gaadi/screens/tabs/gaadi.dart';
-import 'package:hamro_gaadi/screens/tabs/add_entry.dart';
+import 'package:hamro_gaadi/screens/tabs/list_entries_gaadis.dart';
 import 'package:hamro_gaadi/screens/tabs/profile.dart';
 import 'package:hamro_gaadi/screens/tabs/stats_screen.dart';
 import 'package:ionicons/ionicons.dart';
@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
           StatsScreen(),
           GaadiScreen(),
           ProfileScreen(),
-          AddEntryScreen(),
+          ListEntriesAndGaadis(),
         ],
       ),
     );

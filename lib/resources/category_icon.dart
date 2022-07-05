@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
+//TODO: put this list in buttons
+List entryCategories = [
+  "Route Income",
+  "Bank Transaction",
+  "Repair & Maintenance",
+  "Salary Expenses",
+  "Personal Expenses",
+  "Food & Drinks",
+  "Salary & Bonus",
+  "Vehicle Fuel",
+  "Miscellaneous",
+];
+
 getCategoryWiseIcon(String? category) {
   IconData icon;
-  if (category == "Banking Transactions") {
+  if (category == "Bank Transaction") {
     icon = Ionicons.home;
   } else if (category == "Salary Expenses") {
     icon = Ionicons.cash;
