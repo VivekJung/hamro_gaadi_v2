@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hamro_gaadi/resources/category_icon.dart';
 import 'package:hamro_gaadi/resources/color_theme.dart';
 import 'package:hamro_gaadi/services/auth_service.dart';
 
@@ -279,7 +283,10 @@ class AddEntry extends StatefulWidget {
 
 class _AddEntryState extends State<AddEntry> {
   final _formKey = GlobalKey<FormState>();
+  var amtController = TextEditingController();
+  var remarksController = TextEditingController();
   int currentStep = 0;
+  bool switchValue = false;
   StepperType stepperType = StepperType.vertical;
   tapped(int step) {
     setState(() => currentStep = step);
@@ -293,63 +300,143 @@ class _AddEntryState extends State<AddEntry> {
     currentStep > 0 ? setState(() => currentStep -= 1) : null;
   }
 
+  String selectedCategory = "";
+  bool isCategorySelected = true;
+
+  int _choiceIndex = 0;
+  Widget _buildChoiceChips() {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height / 4,
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 250,
+          childAspectRatio: 4,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+        ),
+        itemCount: categoriesList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ChoiceChip(
+            shape: const StadiumBorder(
+                side: BorderSide(width: 1, color: Colors.deepOrangeAccent)),
+            label: FittedBox(
+              fit: BoxFit.contain,
+              child: Row(
+                children: [
+                  Icon(
+                    getCategoryWiseIcon(categoriesList[index]),
+                    size: 12,
+                    color: Colors.black,
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    categoriesList[index],
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            selected: _choiceIndex == index,
+            selectedColor: Colors.deepOrangeAccent.shade100,
+            onSelected: (bool selected) {
+              setState(() {
+                _choiceIndex = selected ? index : 0;
+              });
+            },
+            backgroundColor: Colors.white,
+            labelStyle: const TextStyle(color: Colors.black),
+          );
+        },
+      ),
+    );
+  }
+
   List<Step> getSteps() => [
+        //1 Category
         Step(
           isActive: currentStep >= 0,
           state: currentStep >= 0 ? StepState.complete : StepState.disabled,
           title: const Text(
             'Choose a category',
           ),
-          content: Row(
-            children: [],
-          ),
+          content: _buildChoiceChips(),
         ),
+
+        //2 Income
         Step(
           isActive: currentStep >= 1,
           state: currentStep >= 1 ? StepState.complete : StepState.disabled,
           title: const Text(
             'Is this an income?',
           ),
-          content: Card(
-            shape: const RoundedRectangleBorder(
-              //<-- SEE HERE
-              side: const BorderSide(
-                color: Colors.deepOrangeAccent,
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.done_rounded),
-                    onPressed: () {},
-                    label: const Text("Yes, it is"),
+          content: Container(
+            height: MediaQuery.of(context).size.height * 0.3,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Transform.scale(
+                  scale: 1.5,
+                  child: Switch(
+                    activeColor: Colors.green,
+                    inactiveThumbColor: Colors.deepOrangeAccent,
+                    inactiveTrackColor: Colors.deepOrangeAccent.shade100,
+                    value: switchValue,
+                    onChanged: (value) {
+                      log("VALUE : $value");
+                      setState(() {
+                        switchValue = value;
+                      });
+                    },
                   ),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.grey, // Background color
-                    ),
-                    icon: const Icon(Icons.cancel),
-                    onPressed: () {},
-                    label: const Text("No, it's not"),
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 20),
+                switchValue == true
+                    ? const Text("Yes, it is",
+                        style: TextStyle(color: Colors.green, fontSize: 22))
+                    : const Text("No, it is not ",
+                        style: TextStyle(
+                            color: Colors.deepOrangeAccent, fontSize: 22)),
+              ],
             ),
           ),
         ),
+        //3
         Step(
           isActive: currentStep >= 2,
           state: currentStep >= 2 ? StepState.complete : StepState.disabled,
           title: const Text(
             "Add 'amount'",
           ),
-          content: TextFormField(
-            autofocus: true,
+          content: Form(
+            key: _formKey,
+            child: Row(
+              children: [
+                Text('NRs '),
+                Expanded(
+                  child: TextFormField(
+                    controller: amtController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    autovalidateMode: AutovalidateMode.always,
+                    autofocus: true,
+                    validator: (val) {
+                      if (val!.isEmpty) {
+                        return 'No amount has been added';
+                      }
+                      if (val.length < 3) {
+                        return 'Amount cannot be less than 3 digits';
+                      }
+                      return null;
+                    },
+                    decoration: const InputDecoration(labelText: ''),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
+        //4
         Step(
           isActive: currentStep >= 3,
           state: currentStep >= 3 ? StepState.complete : StepState.disabled,
@@ -408,6 +495,7 @@ class _AddEntryState extends State<AddEntry> {
             ),
           ),
         ),
+        //5
         Step(
           isActive: currentStep >= 4,
           state: currentStep >= 4 ? StepState.complete : StepState.disabled,
@@ -416,18 +504,13 @@ class _AddEntryState extends State<AddEntry> {
             autofocus: true,
           ),
         ),
+        //6
         Step(
             isActive: currentStep >= 5,
             state: currentStep >= 5 ? StepState.complete : StepState.disabled,
             title: const Text("Review"),
             content: saveEntrytoDataBase()),
       ];
-
-  switchStepsType() {
-    setState(() => stepperType == StepperType.vertical
-        ? stepperType = StepperType.horizontal
-        : stepperType = StepperType.vertical);
-  }
 
   saveEntrytoDataBase() {
     return ElevatedButton(
@@ -463,7 +546,7 @@ class _AddEntryState extends State<AddEntry> {
               children: [
                 const Center(
                   child: Text(
-                    "Add a new entry!",
+                    "Add a new entry",
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -472,12 +555,12 @@ class _AddEntryState extends State<AddEntry> {
                 ),
                 Card(
                   shape: RoundedRectangleBorder(
-                    //<-- SEE HERE
                     side: BorderSide(
                       color: ColorTheme().primaryColor,
                     ),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
-                  elevation: 4.0,
+                  elevation: 0.0,
                   child: Stepper(
                     type: stepperType,
                     physics: const ClampingScrollPhysics(),
@@ -496,3 +579,43 @@ class _AddEntryState extends State<AddEntry> {
     );
   }
 }
+
+//  final snackbar = SnackBar(
+//             content: Row(
+//           children: [Icon(icon), const SizedBox(width: 10.0), Text(label)],
+//         ));
+//         ScaffoldMessenger.of(context).showSnackBar(snackbar);
+
+// Widget _buildChip(String label, IconData icon) {
+  //   return ChoiceChip(
+  //     selected: isCategorySelected,
+  //     onSelected: (bool selected) {
+  //       setState(() {
+  //         isCategorySelected = selected;
+  //       });
+  //     },
+  //     avatar: CircleAvatar(
+  //         radius: 8,
+  //         backgroundColor: Colors.white70,
+  //         child: Icon(icon, size: 16)),
+  //     label: Text(label,
+  //         style: TextStyle(color: ColorTheme().blackColor, fontSize: 12)),
+  //     selectedColor: Colors.deepOrange.shade100,
+  //     backgroundColor: Colors.white,
+  //     shape: const StadiumBorder(
+  //         side: BorderSide(width: 1, color: Colors.deepOrangeAccent)),
+  //     elevation: 2.0,
+  //     shadowColor: Colors.grey[60],
+  //     padding: const EdgeInsets.only(right: 8),
+  //   );
+  // }
+
+    // List<Widget> getAllCategories() {
+  //   List<Widget> newList = [];
+  //   for (int i = 0; i < categoriesList.length; i++) {
+  //     log(categoriesList[i]);
+  //     newList.add(_buildChip(
+  //         categoriesList[i], getCategoryWiseIcon(categoriesList[i])));
+  //   }
+  //   return newList;
+  // }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
 //TODO: put this list in buttons
-List entryCategories = [
+List categoriesList = [
   "Route Income",
   "Bank Transaction",
   "Repair & Maintenance",
