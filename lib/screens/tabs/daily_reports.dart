@@ -92,15 +92,6 @@ class _DailyReportsState extends State<DailyReports> {
     );
   }
 
-  // testbtn() {
-  //   return IconButton(
-  //       onPressed: () async {
-  //         await FirestoreService().updateTransaction(100, true, false, "entry5");
-  //         // await FirestoreService().getSpecificdata("entry8");
-  //       },
-  //       icon: const Icon(Icons.mail, color: Colors.white));
-  // }
-
   Card incomeExpenseStatus(List<Entries> entries) {
     return Card(
       child: Padding(

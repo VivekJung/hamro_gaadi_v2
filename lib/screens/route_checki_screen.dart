@@ -7,9 +7,6 @@ import 'package:hamro_gaadi/resources/error_notifier.dart';
 import 'package:hamro_gaadi/screens/home_screen.dart';
 import 'package:hamro_gaadi/screens/login.dart';
 import 'package:hamro_gaadi/services/auth_service.dart';
-import 'package:hamro_gaadi/services/firestore_service.dart';
-import 'package:hamro_gaadi/services/models.dart';
-import 'package:provider/provider.dart';
 
 class RouteCheckScreen extends StatelessWidget {
   const RouteCheckScreen({Key? key}) : super(key: key);

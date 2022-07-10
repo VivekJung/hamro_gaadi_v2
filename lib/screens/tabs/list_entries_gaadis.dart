@@ -114,28 +114,6 @@ class _ListEntriesAndGaadisState extends State<ListEntriesAndGaadis> {
 
   addEntryBtn() {
     //TODO: MAKE ADD FORM! and when an entry is added update it into gaadi as well
-    String category = "Banking Transaction";
-    String remarks = "Kista for gaadi ";
-    int amt = 99999;
-    bool isIncome = true;
-    bool isFreshEntry = false;
-    String entryID = "entry20";
-    String gaadiID = "Na 7 kha 1448";
-
-    Details details = Details(
-      amount: amt,
-      category: category,
-      isIncome: isIncome,
-      remarks: remarks,
-    );
-
-    Entries entry = Entries(
-      addedBy: AuthService().user!.uid,
-      entryID: entryID,
-      entryLog: "${DateTime.now()}",
-      gaadiID: gaadiID,
-      details: details,
-    );
 
     return Center(
       child: Column(
@@ -145,8 +123,7 @@ class _ListEntriesAndGaadisState extends State<ListEntriesAndGaadis> {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: ((context) =>
-                        AddEntry(entry: entry, isFreshEntry: isFreshEntry)),
+                    builder: ((context) => const AddEntry()),
                   ),
                 );
                 // buildEntryForm(isFreshEntry, entry);
@@ -272,10 +249,9 @@ class _ListEntriesAndGaadisState extends State<ListEntriesAndGaadis> {
 //               child:
 
 class AddEntry extends StatefulWidget {
-  final Entries entry;
-  final bool isFreshEntry;
-  const AddEntry({Key? key, required this.entry, required this.isFreshEntry})
-      : super(key: key);
+  const AddEntry({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<AddEntry> createState() => _AddEntryState();
@@ -283,11 +259,25 @@ class AddEntry extends StatefulWidget {
 
 class _AddEntryState extends State<AddEntry> {
   final _formKey = GlobalKey<FormState>();
+
   var amtController = TextEditingController();
   var remarksController = TextEditingController();
+
+  String category = "Route Income";
+  String remarks = "no remarks";
+  int amount = 0;
+  bool isIncome = true;
+  bool isFreshEntry = false;
+  String entryID = "testID1";
+  String gaadiID = "Na 7 kha 1448";
+  Entries? entry;
+  Details? details;
+
   int currentStep = 0;
-  bool switchValue = false;
+  bool switchValue = true;
+
   StepperType stepperType = StepperType.vertical;
+
   tapped(int step) {
     setState(() => currentStep = step);
   }
@@ -302,8 +292,8 @@ class _AddEntryState extends State<AddEntry> {
 
   String selectedCategory = "";
   bool isCategorySelected = true;
-
   int _choiceIndex = 0;
+
   Widget _buildChoiceChips() {
     return SizedBox(
       height: MediaQuery.of(context).size.height / 4,
@@ -317,8 +307,9 @@ class _AddEntryState extends State<AddEntry> {
         itemCount: categoriesList.length,
         itemBuilder: (BuildContext context, int index) {
           return ChoiceChip(
-            shape: const StadiumBorder(
-                side: BorderSide(width: 1, color: Colors.deepOrangeAccent)),
+            shape: StadiumBorder(
+                side: BorderSide(
+                    width: 1, color: Colors.deepOrangeAccent.shade200)),
             label: FittedBox(
               fit: BoxFit.contain,
               child: Row(
@@ -341,7 +332,9 @@ class _AddEntryState extends State<AddEntry> {
             onSelected: (bool selected) {
               setState(() {
                 _choiceIndex = selected ? index : 0;
+                category = categoriesList[index];
               });
+              log("Cateogry selected : " + category);
             },
             backgroundColor: Colors.white,
             labelStyle: const TextStyle(color: Colors.black),
@@ -351,6 +344,7 @@ class _AddEntryState extends State<AddEntry> {
     );
   }
 
+  bool isGaadiSelected = false;
   List<Step> getSteps() => [
         //1 Category
         Step(
@@ -369,7 +363,7 @@ class _AddEntryState extends State<AddEntry> {
           title: const Text(
             'Is this an income?',
           ),
-          content: Container(
+          content: SizedBox(
             height: MediaQuery.of(context).size.height * 0.3,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -383,10 +377,10 @@ class _AddEntryState extends State<AddEntry> {
                     inactiveTrackColor: Colors.deepOrangeAccent.shade100,
                     value: switchValue,
                     onChanged: (value) {
-                      log("VALUE : $value");
                       setState(() {
-                        switchValue = value;
+                        isIncome = switchValue = value;
                       });
+                      log("VALUE : $value, $switchValue, $isIncome");
                     },
                   ),
                 ),
@@ -412,7 +406,7 @@ class _AddEntryState extends State<AddEntry> {
             key: _formKey,
             child: Row(
               children: [
-                Text('NRs '),
+                const Text('NRs '),
                 Expanded(
                   child: TextFormField(
                     controller: amtController,
@@ -427,6 +421,7 @@ class _AddEntryState extends State<AddEntry> {
                       if (val.length < 3) {
                         return 'Amount cannot be less than 3 digits';
                       }
+
                       return null;
                     },
                     decoration: const InputDecoration(labelText: ''),
@@ -464,29 +459,31 @@ class _AddEntryState extends State<AddEntry> {
                   children: [
                     ElevatedButton.icon(
                       icon: const Icon(Icons.car_repair),
-                      onPressed: () {},
+                      onPressed: () {
+                        gaadiID = "Na 4 Kha, 3232";
+                        showGaadiSnackbarMessage(gaadiID);
+                      },
                       label: const Text(
                         "Na 4 Kha, 3232",
                       ),
                     ),
                     ElevatedButton.icon(
                       icon: const Icon(Icons.car_repair),
-                      onPressed: () {},
+                      onPressed: () {
+                        // setState(() {
+                        //   gaadiID = "Ba 4 Kha, 1678";
+                        // });
+                        gaadiID = "Ba 4 Kha, 1678";
+                        showGaadiSnackbarMessage(gaadiID);
+                      },
                       label: const Text("Ba 4 Kha, 1678"),
                     ),
                     ElevatedButton.icon(
                       icon: const Icon(Icons.car_repair),
-                      onPressed: () {},
-                      label: const Text("Ko 8 Kha, 1347"),
-                    ),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.car_repair),
-                      onPressed: () {},
-                      label: const Text("Ko 8 Kha, 1347"),
-                    ),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.car_repair),
-                      onPressed: () {},
+                      onPressed: () {
+                        gaadiID = "Ko 8 Kha, 1347";
+                        showGaadiSnackbarMessage(gaadiID);
+                      },
                       label: const Text("Ko 8 Kha, 1347"),
                     ),
                   ],
@@ -502,6 +499,20 @@ class _AddEntryState extends State<AddEntry> {
           title: const Text("Add more briefs here"),
           content: TextFormField(
             autofocus: true,
+            controller: remarksController,
+            validator: (val) {
+              if (val!.isEmpty) {
+                return 'No remarks given';
+              }
+              if (val.length < 3) {
+                return 'Please provide more information';
+              }
+
+              return null;
+            },
+            maxLines: 5,
+            minLines: 2,
+            decoration: const InputDecoration(labelText: 'Briefs and remarks'),
           ),
         ),
         //6
@@ -513,18 +524,49 @@ class _AddEntryState extends State<AddEntry> {
       ];
 
   saveEntrytoDataBase() {
+    var a = amtController.text;
+    // amount = a == '' ? int.parse(a) : 0;
+    entryID = "test2";
+    remarks = remarksController.text;
+    details = Details(
+        amount: int.parse(a),
+        category: category,
+        isIncome: isIncome,
+        remarks: remarks);
+
+    entry = Entries(
+      addedBy: AuthService().user!.uid,
+      entryID: entryID,
+      entryLog: "${DateTime.now()}",
+      gaadiID: gaadiID,
+      details: details!,
+    );
+    log("Final Entry Data \n $category, $isIncome, ${amtController.text}, \n $entryID ${remarksController.text}, $gaadiID, $isFreshEntry");
     return ElevatedButton(
       child: const Text("Save"),
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
           //todo: check why it is still saying the entry is true.
-          await FirestoreService().addEntry(widget.entry);
-          await FirestoreService()
-              .updateTransaction(widget.isFreshEntry, widget.entry);
+          log(entry!.details.toString());
+          await FirestoreService().addEntry(entry!);
+          await FirestoreService().updateTransaction(isFreshEntry, entry!);
+        } else {
+          const snackbar = SnackBar(
+            content: Text('Data form is incomplete, please re-check'),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackbar);
         }
       },
     );
+  }
+
+  showGaadiSnackbarMessage(gaadiID) {
+    final snackbar = SnackBar(
+        content: Text(gaadiID),
+        duration: const Duration(seconds: 1),
+        backgroundColor: Colors.green);
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
   @override
