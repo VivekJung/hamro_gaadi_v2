@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   //* start of bottom navigation functions and widgets
 
-  int pageIndex = 4;
+  int pageIndex = 1;
   Widget getBottomNavigation() {
     List<IconData> iconItems = [
       Ionicons.calendar,

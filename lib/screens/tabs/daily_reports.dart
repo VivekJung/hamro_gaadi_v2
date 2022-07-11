@@ -144,7 +144,6 @@ class _DailyReportsState extends State<DailyReports> {
   }
 
   Widget transactionSection(List<Entries> entries) {
-    int? totalAmt;
     return Card(
       child: Column(
         children: [

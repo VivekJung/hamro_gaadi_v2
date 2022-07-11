@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
                 ),
                 StreamProvider<List<Entries>>(
                   create: (BuildContext context) =>
-                      FirestoreService().streamAllEntries(),
+                      FirestoreService().streamAllEntires(),
                   initialData: const [],
                 ),
               ],

@@ -30,7 +30,13 @@ class DateTimeExtractor {
     return indexForWeek;
   }
 
+  int getThisMonthAsInteger() {
+    var d = int.tryParse(DateFormat('MM').format(date)) ?? 1;
+    return d - 1;
+  }
+
   int getMonthAsInteger(int indexForMonth) {
+    // log("indexForthis month is  $indexForMonth");
     String monthFormat = DateFormat('MMMM').format(date);
 
     if (monthFormat == "January") {

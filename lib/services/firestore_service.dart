@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hamro_gaadi/services/auth_service.dart';
 import 'package:hamro_gaadi/services/models.dart';
+import 'package:intl/intl.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -109,33 +110,33 @@ class FirestoreService {
     }).catchError((error) => log("Failed to add entry: $error"));
   }
 
-  Future addToAmountCollection(int amt, bool isIncome, String entryID) async {
-    List<Map<String, dynamic>> newAmt = [
-      {"amt": amt, "entryID": entryID}
-    ];
-    Map<String, dynamic> newAmtStatus = {'info': FieldValue.arrayUnion(newAmt)};
+  // Future addToAmountCollection(int amt, bool isIncome, String entryID) async {
+  //   List<Map<String, dynamic>> newAmt = [
+  //     {"amt": amt, "entryID": entryID}
+  //   ];
+  //   Map<String, dynamic> newAmtStatus = {'info': FieldValue.arrayUnion(newAmt)};
 
-    if (isIncome == true) {
-      var ref = _db.collection('income').doc("incomeData");
-      var snap = await ref.get();
-      List getAllData = snap.get('info');
+  //   if (isIncome == true) {
+  //     var ref = _db.collection('income').doc("incomeData");
+  //     var snap = await ref.get();
+  //     List getAllData = snap.get('info');
 
-      if (getAllData.contains({"entryID": entryID})) {
-        return ref.update({
-          "info": FieldValue.arrayRemove(newAmt),
-        });
-      } else {
-        return ref.set(newAmtStatus, SetOptions(merge: true))
-          ..then((value) => log('Updated Income with $newAmt'))
-              .catchError((error) => log("Failed to add entry: $error"));
-      }
-    } else {
-      var ref = _db.collection('expenses').doc("expenseData");
-      return ref.set(newAmtStatus, SetOptions(merge: true))
-        ..then((value) => log('Updated Expense with $newAmt'))
-            .catchError((error) => log("Failed to add entry: $error"));
-    }
-  }
+  //     if (getAllData.contains({"entryID": entryID})) {
+  //       return ref.update({
+  //         "info": FieldValue.arrayRemove(newAmt),
+  //       });
+  //     } else {
+  //       return ref.set(newAmtStatus, SetOptions(merge: true))
+  //         ..then((value) => log('Updated Income with $newAmt'))
+  //             .catchError((error) => log("Failed to add entry: $error"));
+  //     }
+  //   } else {
+  //     var ref = _db.collection('expenses').doc("expenseData");
+  //     return ref.set(newAmtStatus, SetOptions(merge: true))
+  //       ..then((value) => log('Updated Expense with $newAmt'))
+  //           .catchError((error) => log("Failed to add entry: $error"));
+  //   }
+  // }
 
   Future updateTransaction(bool isFreshEntry, Entries entry) {
     //this function adds the transaction amount as income or expense and substracts if transaction is not freshentry
@@ -155,7 +156,7 @@ class FirestoreService {
         };
       }
       return ref.set(data, SetOptions(merge: true)).then((value) => (log(
-          'Updated with ${entry.details.amount} fershEntry: $isFreshEntry isIncome: ${entry.details.isIncome}')));
+          'Updated with ${entry.details.amount} freshEntry: $isFreshEntry isIncome: ${entry.details.isIncome}')));
     } else {
       var ref = _db.collection('transaction').doc('expense');
       if (isFreshEntry == true) {
@@ -171,7 +172,7 @@ class FirestoreService {
         };
       }
       return ref.set(data, SetOptions(merge: true)).then((value) => (log(
-          'Updated with ${entry.details.amount.toInt()} fershEntry: $isFreshEntry isIncome: ${entry.details.isIncome}')));
+          'Updated with ${entry.details.amount.toInt()} freshEntry: $isFreshEntry isIncome: ${entry.details.isIncome}')));
     }
   }
 
@@ -190,20 +191,64 @@ class FirestoreService {
     return stream;
   }
 
-  Stream<List<Entries>> streamAllEntries() {
+  Stream<List<Entries>> streamSelectedDayEntries(String? date) {
+    //todo: getvalue with selected Date, now doing specific day
+    var selectedDate =
+        date ?? DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
+    // var now = DateTime.now();
+    // var currentDate = DateTime(now.year, now.month, now.day).toString();
+
     var stream = _db
         .collection('entries')
         .where("addedBy", isEqualTo: uid)
-        .orderBy('entryLog', descending: true)
+        .where('entryLog', isEqualTo: selectedDate)
+        // .orderBy('entryLog', descending: true)
+        .limit(10)
         .snapshots()
         .map((event) =>
             event.docs.map((e) => Entries.fromJson(e.data())).toList());
     log(stream.toString());
+
     return stream;
   }
 
+  Stream<List<Entries>> streamSelectedMonthEntries(int? month) {
+    //todo: getvalue with selected Date, now doing specific day
+    var selectedMonth = month ?? DateFormat('MM').format(DateTime.now());
+    // var now = DateTime.now();
+    // var currentDate = DateTime(now.year, now.month, now.day).toString();
+
+    var stream = _db
+        .collection('entries')
+        .where("addedBy", isEqualTo: uid)
+        .where('entryMonth', isEqualTo: selectedMonth)
+        // .orderBy('entryLog', descending: true)
+        .limit(10)
+        .snapshots()
+        .map((event) =>
+            event.docs.map((e) => Entries.fromJson(e.data())).toList());
+    log("DATA of stream : $stream");
+
+    return stream;
+  }
+
+  Stream<List<Entries>> streamAllEntires() {
+    var stream = _db
+        .collection('entries')
+        .where("addedBy", isEqualTo: uid)
+        .orderBy('entryLog', descending: true)
+        .limit(10)
+        .snapshots()
+        .map((event) =>
+            event.docs.map((e) => Entries.fromJson(e.data())).toList());
+    log(stream.toString());
+
+    return stream;
+  }
+
+  //* not in use now
   getSpecificdata(entryID) {
-    var col = _db.collection('income');
+    var col = _db.collection('transactions');
     var ref = col.where('info', arrayContains: {"entryID": entryID});
 
     var result = ref

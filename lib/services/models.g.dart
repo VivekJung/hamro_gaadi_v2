@@ -11,6 +11,7 @@ Entries _$EntriesFromJson(Map<String, dynamic> json) => Entries(
       details: Details.fromJson(json['details'] as Map<String, dynamic>),
       entryID: json['entryID'] as String? ?? "",
       entryLog: json['entryLog'] as String? ?? "",
+      entryMonth: json['entryMonth'] as int? ?? 0,
       gaadiID: json['gaadiID'] as String? ?? "",
     );
 
@@ -19,6 +20,7 @@ Map<String, dynamic> _$EntriesToJson(Entries instance) => <String, dynamic>{
       'details': instance.details.toJson(),
       'entryID': instance.entryID,
       'entryLog': instance.entryLog.toString(),
+      'entryMonth': instance.entryMonth,
       'gaadiID': instance.gaadiID,
     };
 

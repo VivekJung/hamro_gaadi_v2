@@ -263,13 +263,13 @@ class _AddEntryState extends State<AddEntry> {
   var amtController = TextEditingController();
   var remarksController = TextEditingController();
 
-  String category = "Route Income";
+  String category = "No category";
   String remarks = "no remarks";
   int amount = 0;
   bool isIncome = true;
-  bool isFreshEntry = false;
-  String entryID = "testID1";
-  String gaadiID = "Na 7 kha 1448";
+  bool isFreshEntry = true;
+  String entryID = "";
+  String gaadiID = "";
   Entries? entry;
   Details? details;
 
@@ -524,12 +524,12 @@ class _AddEntryState extends State<AddEntry> {
       ];
 
   saveEntrytoDataBase() {
-    var a = amtController.text;
-    // amount = a == '' ? int.parse(a) : 0;
+    int? a = int.tryParse(amtController.text);
+    // log(a.toString());
     entryID = "test2";
     remarks = remarksController.text;
     details = Details(
-        amount: int.parse(a),
+        amount: a ?? 0,
         category: category,
         isIncome: isIncome,
         remarks: remarks);

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'models.g.dart';
@@ -27,13 +29,15 @@ class Entries {
   Details details;
   String? entryID;
   String? entryLog;
+  int? entryMonth;
   String? gaadiID;
 
   Entries({
     this.addedBy = "",
     required this.details,
     this.entryID = "",
-    this.entryLog,
+    this.entryLog = "",
+    this.entryMonth = 0,
     this.gaadiID = "",
   });
 
@@ -49,6 +53,7 @@ class Entries {
       addedBy: doc.data()!['addedBy'],
       entryID: doc.data()!['entryID'],
       entryLog: doc.data()!['entryLog'],
+      entryMonth: doc.data()!['entryMonth'],
       gaadiID: doc.data()!['gaadiID'],
       details: doc.data()!['details'],
     );
